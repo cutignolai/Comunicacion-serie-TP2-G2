@@ -8,9 +8,7 @@
  * INCLUDE HEADER FILES
  ******************************************************************************/
 
-#include "board.h"
-#include "gpio.h"
-
+#include "data_manager.h"
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
@@ -18,11 +16,25 @@
 
 
 /*******************************************************************************
+ * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
+ ******************************************************************************/
+
+
+
+/*******************************************************************************
+ * VARIABLES WITH GLOBAL SCOPE
+ ******************************************************************************/
+
+static board current_board;
+
+/*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
 
-static void delayLoop(uint32_t veces);
+O_EVENT GetPositionEvent(void);   
 
+
+void GetPositionChange(void);
 
 /*******************************************************************************
  *******************************************************************************
@@ -33,14 +45,13 @@ static void delayLoop(uint32_t veces);
 /* Función que se llama 1 vez, al comienzo del programa */
 void App_Init (void)
 {
-    gpioMode(PIN_LED_BLUE, OUTPUT);
+    
 }
 
 /* Función que se llama constantemente en un ciclo infinito */
 void App_Run (void)
 {
-    delayLoop(4000000UL);
-    gpioToggle(PIN_LED_BLUE);
+    
 }
 
 
@@ -49,11 +60,26 @@ void App_Run (void)
                         LOCAL FUNCTION DEFINITIONS
  *******************************************************************************
  ******************************************************************************/
+void updateBoard(void){
 
-static void delayLoop(uint32_t veces)
-{
-    while (veces--);
+    switch(GetPositionEvent()){
+        case ROLL_EVENT:       
+            current_board.roll = getRoll();
+            SendData(current_board, ROLL_EVENT);
+            break;
+        case PITCH_EVENT:       
+            current_board.pitch = getPitch();
+            SendData(current_board, PITCH_EVENT);
+            break;
+        case YAW_EVENT:        
+            current_board.yaw = getYaw();
+            SendData(current_board, YAW_EVENT);
+            break;
+        default:        
+            //do nothing
+    }
 }
+
 
 
 /*******************************************************************************
