@@ -37,21 +37,28 @@ targetShowOrientacion = np.zeros(8)
 keys = {pygame.K_RETURN: 0}
 
 texts = [
-    "Board 1",
-    "Board 2",
-    "Board 3",
-    "Board 4",
-    "Board 5",
+    "Placa 1",
+    "Placa 2",
+    "Placa 3",
+    "Placa 4",
+    "Placa 5",
+    "Placa 6",
+    "Placa 7",
+    "Placa 8"
 ]
 
 dataQueue = []
+
 
 codes = {
     "1": 0,
     "2": 1,
     "3": 2,
     "4": 3,
-    "5": 4
+    "5": 4,
+    "6": 5,
+    "7": 6,
+    "8": 7
 }
 
 def axis():
@@ -79,11 +86,11 @@ def axis():
     glColor3f(1, 1, 1)
 
 def Cube():
-    glBegin(GL_LINES)
+    GL.glBegin(GL.GL_LINES)
     for edge in edges:
         for vertex in edge:
-            glVertex3fv(vertices[vertex])
-    glEnd()
+            GL.glVertex3fv(vertices[vertex])
+    GL.glEnd()
 
 
 def drawText(position, textString, color):
