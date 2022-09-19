@@ -37,11 +37,14 @@ targetShowOrientacion = np.zeros(8)
 keys = {pygame.K_RETURN: 0}
 
 texts = [
-    "Board 1",
-    "Board 2",
-    "Board 3",
-    "Board 4",
-    "Board 5"
+    "Placa 1",
+    "Placa 2",
+    "Placa 3",
+    "Placa 4",
+    "Placa 5",
+    "Placa 6",
+    "Placa 7",
+    "Placa 8"
 ]
 
 dataQueue = []
@@ -52,10 +55,42 @@ codes = {
     "2": 1,
     "3": 2,
     "4": 3,
-    "5": 4
+    "5": 4,
+    "6": 5,
+    "7": 6,
+    "8": 7
 }
 
+def axis():
+    glColor3f(0, 0, 1)
 
+    glBegin(GL_LINES)
+    glVertex3f(0, 0, 0)
+    glVertex3f(0, 0, 2)
+    glEnd()
+
+    glColor3f(0, 1, 0)
+
+    glBegin(GL_LINES)
+    glVertex3f(0, 0, 0)
+    glVertex3f(0, 2, 0)
+    glEnd()
+
+    glColor3f(1, 0, 0)
+
+    glBegin(GL_LINES)
+    glVertex3f(0, 0, 0)
+    glVertex3f(2, 0, 0)
+    glEnd()
+
+    glColor3f(1, 1, 1)
+
+def Cube():
+    glBegin(GL_LINES)
+    for edge in edges:
+        for vertex in edge:
+            glVertex3fv(vertices[vertex])
+    glEnd()
 
 
 def drawText(position, textString, color):
@@ -102,7 +137,7 @@ def ReadData():
         pygame.time.wait(10)
 
         #testing
-        #connected = True
+        connected = True
 
         if not connected:
             try:
@@ -142,8 +177,10 @@ def ReadData():
 
 
                 dataString = str(port_data)
-                print("Information received: ", dataString)   
-               
+                print("Information received: ", dataString)
+                
+                #testing
+                dataString = "2R125"
 
                 if dataString != "":
                     try:
@@ -164,21 +201,13 @@ def ReadData():
             except:
                 print("Decoding error")
 
-
 def main():
     global coms
     global showRoll, showPitch, showYaw, targetShowCabeceo, targetShowOrientacion, targetShowRolido
     selected_board = 0
 
-    def on_closing():
-        global run
-        run = False
-        window.destroy()
-
-
     pygame.init()
     display = (800, 600)
-    pygame.display.set_caption('TP2 Labo de micros G2')
     pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
 
     gluPerspective(45, (display[0]/display[1]), 0.1, 50.0)
@@ -186,6 +215,8 @@ def main():
     #glTranslatef(0.0, 0.0, -1)
 
     glRotatef(0, 0, 0, 0)
+
+    camPosition = 0
 
     coms= None
 
@@ -204,15 +235,9 @@ def main():
                 if event.key == pygame.K_LEFT:
                     if selected_board > 0:
                         selected_board -= 1
-                if event.key == pygame.K_LEFT:
-                    if selected_board == 0:
-                        selected_board = 4
                 if event.key == pygame.K_RIGHT:
                     if selected_board < 5:
                         selected_board += 1
-                if event.key == pygame.K_RIGHT:
-                    if selected_board >= 5:
-                        selected_board = 0
 
                 if event.type == pygame.KEYDOWN:
                     keys[event.key] = 1
@@ -222,26 +247,85 @@ def main():
                     keys[event.key] = 0
 
 
+
         #print(status)
+
+        targetPostion = -positions[selected_board]
+
+        camPosition += (targetPostion - camPosition)/10
 
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
 
+        glTranslatef(camPosition, 0.0, -10)
 
-        drawText((positions[0]-1, 2, -10), texts[selected_board], (255, 255, 255))
-        #smallDrawText((positions[0]-1, 1, -10), "(Press enter)",(255,255,255))
+        for i in [selected_board-1, selected_board, selected_board + 1]:
+            if i < 0:
+                continue
+            if i >= 5:
+                continue
 
-        drawText((positions[0]-2, -6, -18), "Roll: %d " % roll[selected_board], (255, 0, 0))
-        drawText((positions[0]-2, -4, -18), "Pitch: %d " % pitch[selected_board], (0, 0, 255))
-        drawText((positions[0]-2, -2, -18), "Yaw: %d " % yaw[selected_board], (0, 255, 0))
-        
-        if enterPressed:
-            showRoll[selected_board] = 0
-            showPitch[selected_board] = 0
-            showYaw[selected_board] = 0
+            drawText((positions[i]-2, 6, -10), texts[i], (255, 255, 255))
+            smallDrawText((positions[i]-2.5, 5, -10), "(Press enter)",(255,255,255))
 
-            targetShowRolido[selected_board] = roll[selected_board]
-            targetShowCabeceo[selected_board] = pitch[selected_board]
-            targetShowOrientacion[selected_board] = yaw[selected_board]                
+            drawText((positions[i]-4, -10, -18), "Roll: %d " % roll[i], (255, 0, 0))
+            drawText((positions[i]-4, -8, -18), "Pitch: %d " % pitch[i], (0, 0, 255))
+            drawText((positions[i]-4, -6, -18), "Yaw: %d " % yaw[i], (0, 255, 0))
+            
+
+            glTranslate(
+                cubePositions[i][0],
+                cubePositions[i][1],
+                cubePositions[i][2]
+            )
+
+            # roll - rolido
+            glRotatef(showRoll[i], 0, 0, 1)
+
+            # pitch - cabeceo
+            glRotatef(showPitch[i], 1, 0, 0)
+
+            # yaw - orientacion
+            glRotatef(-showYaw[i], 0, 1, 0)
+
+            #axis()
+            #Cube()
+
+            
+            # roll - rolido
+            glRotatef(-showRoll[i], 0, 0, 1)
+
+            # pitch - cabeceo
+            glRotatef(-showPitch[i], 1, 0, 0)
+
+            # yaw - orientacion
+            glRotatef(showYaw[i], 0, 1, 0)
+
+            glTranslate(
+                -cubePositions[i][0],
+                -cubePositions[i][1],
+                -cubePositions[i][2]
+            )
+
+            showYaw[i] += (targetShowOrientacion[i] - showYaw[i]) / 30
+            if abs(showYaw[i] - targetShowOrientacion[i]) < 0.5:
+                showYaw[i] = targetShowOrientacion[i]
+                showRoll[i] += (targetShowRolido[i] - showRoll[i]) / 30
+                if abs(showRoll[i] - targetShowRolido[i]) < 0.5:
+                    showRoll[i] = targetShowRolido[i]
+                    showPitch[i] += (targetShowCabeceo[i] - showPitch[i]) / 30
+
+            if enterPressed:
+                showRoll[i] = 0
+                showPitch[i] = 0
+                showYaw[i] = 0
+
+                targetShowRolido[i] = roll[i]
+                targetShowCabeceo[i] = pitch[i]
+                targetShowOrientacion[i] = yaw[i]                
+
+        #glTranslatef(-camPosition, 0.0, -15)
+
+        glTranslatef(-camPosition, 0.0, 10)
 
         pygame.display.flip()
         #pygame.time.wait(10)
