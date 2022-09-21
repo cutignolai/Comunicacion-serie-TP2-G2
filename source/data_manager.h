@@ -38,10 +38,26 @@ typedef struct{
  ******************************************************************************/
 
 /**
- * @brief process the 200 bits into the card information
- * @param x a parameter
- * @return A pointer to an 8 unsigned ints array corresponding to the ID
+ * @brief initializes data management functions
  */
+void dataManager_init(void)
+
+/**
+ * @brief returns the matrix with all the board values
+ * @return A pointer to an board type matrix
+ */
+board* getBoards(void);
+
+uint8_t getGroup (void);       //indicates which group has sent data
+
+
+/**
+ * @brief sends the data that changed to the pc via UART protocol
+ * @param current_board the board being modified with it's current values
+ * @param group group number of such board
+ * @param event modification made to the board
+ */
+void sendData (board current_board, uint8_t group, O_EVENT event);
 
 
 /*******************************************************************************
