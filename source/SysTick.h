@@ -1,34 +1,29 @@
 /***************************************************************************//**
-  @file     data_manager.h
-  @brief    provides functions to send coded data to the pc
-  @author   Pedro DL
+  @file     SysTick.h
+  @brief    SysTick driver
+  @author   Nicol�s Magliola
  ******************************************************************************/
 
-#ifndef _DATA_MANAGER_
-#define _DATA_MANAGER_
+#ifndef _SYSTICK_H_
+#define _SYSTICK_H_
 
 /*******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
 
-#include <stdint.h>
 #include <stdbool.h>
+
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
+#define SYSTICK_ISR_FREQUENCY_HZ 1000U
+
+
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
-
-typedef enum {ROLL_EVENT, PITCH_EVENT, YAW_EVENT, NO_EVENT} O_EVENT;
-
-typedef struct{
-    int16_t roll;
-    int16_t pitch;
-    int16_t yaw;
-}board;
 
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
@@ -39,29 +34,14 @@ typedef struct{
  ******************************************************************************/
 
 /**
- * @brief initializes data management functions
+ * @brief Initialize SysTic driver
+ * @param funcallback Function to be call every SysTick
+ * @return Initialization and registration succeed
  */
-void dataManager_init(void);
-
-/**
- * @brief returns the matrix with all the board values
- * @return A pointer to an board type matrix
- */
-board* getBoards(void);
-
-
-
-
-/**
- * @brief sends the data that changed to the pc via UART protocol
- * @param current_board the board being modified with it's current values
- * @param group group number of such board
- * @param event modification made to the board
- */
-void sendData (board current_board, uint8_t group, O_EVENT event);
+bool SysTick_Init (void (*funcallback)(void));
 
 
 /*******************************************************************************
  ******************************************************************************/
 
-#endif // _DATA_MANAGER_
+#endif // _SYSTICK_H_

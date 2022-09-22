@@ -9,6 +9,9 @@
  ******************************************************************************/
 
 #include "data_manager.h"
+#include <stdint.h>
+#include <stdbool.h>
+#include <stddef.h>
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
@@ -44,6 +47,7 @@ void GetPositionChange(void);
 //updates the current board to the one indicated
 void setBoard (void);
 
+void updateBoard(void);
 
 //testing
 
@@ -75,7 +79,7 @@ void App_Init (void)
     position_event = false; 
     periferic.roll = 0;
     periferic.pitch = 0;
-    perieric. yaw = 0;
+    periferic.yaw = 0;
 
 }
 
@@ -101,20 +105,21 @@ void updateBoard(void){
         case ROLL_EVENT:
             setBoard();
             current_board.roll = getRoll();
-            SendData(current_board, current_group, ROLL_EVENT);
+            sendData(current_board, current_group, ROLL_EVENT);
             break;
         case PITCH_EVENT:
             setBoard();       
             current_board.pitch = getPitch();
-            SendData(current_board, current_group, PITCH_EVENT);
+            sendData(current_board, current_group, PITCH_EVENT);
             break;
         case YAW_EVENT:
             setBoard();        
             current_board.yaw = getYaw();
-            SendData(current_board, current_group, YAW_EVENT);
+            sendData(current_board, current_group, YAW_EVENT);
             break;
-        default:        
-            //do nothing
+        default:
+        	//do nothing
+        	break;
     }
     //testing -> turns off the event so 
     position_event = false;
@@ -123,14 +128,14 @@ void updateBoard(void){
 void setBoard (void){
     current_group = getGroup();
     board* p = getBoards();
-    current_board.roll = *(p + current_group).roll;
-    current_board.pitch = *(p + current_group).pitch;
-    current_board.yaw = *(p + current_group).yaw;
+    current_board.roll = (p+current_group)->roll;
+    current_board.pitch = (p+current_group)->pitch;
+    current_board.yaw = (p+current_group)->yaw;
 }
 
 //testing functions
 
-static void genData()
+void genData(void)
 {
     uint32_t veces = 4000000UL;
     while (veces--);
@@ -196,7 +201,8 @@ uint16_t getYaw(void){
 }
 
 uint8_t getGroup (void){    //for test purpose only will return our group number
-    return 2;               // this should be data saved the moment an interuption is generated and new data is available
+	uint8_t group = 2;
+    return (group-1);           // this should be data saved the moment an interuption is generated and new data is available
 }
 /*******************************************************************************
  ******************************************************************************/
