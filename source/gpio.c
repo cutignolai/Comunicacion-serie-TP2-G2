@@ -45,6 +45,8 @@ static pinIrqFun_t CALLBACKS[ARRAY_SIZE];
 
 static void IRQHandler(int32_t port);
 
+
+
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
@@ -75,34 +77,34 @@ void gpioMode (pin_t pin, uint8_t mode)
 	PORT_Type* port_ptr = PORT_PTRS[port];
 
     // Vacio el puerto:
-	port_ptr->PCR[num_pin] = 0x0;                   // Tener cuidado, se puso todo en 0!                                
-    
+	port_ptr->PCR[num_pin] = 0x0;                   // Tener cuidado, se puso todo en 0!
+
     // MUX:
     port_ptr->PCR[num_pin] |= PORT_PCR_MUX(0b001);  // 001 Alternative 1 (GPIO).
-	
+
     // DSE:
-    port_ptr->PCR[num_pin] |= PORT_PCR_DSE(0b1);    // 1 High drive strength is configured on the corresponding pin, if pin is configured as a digital output.  
+    port_ptr->PCR[num_pin] |= PORT_PCR_DSE(0b1);    // 1 High drive strength is configured on the corresponding pin, if pin is configured as a digital output.
 
     // SRE:
     // Ver final del codigo
 
     // PS & PE:
-    if ((mode==INPUT_PULLDOWN)||(mode==INPUT_PULLUP)) 
+    if ((mode==INPUT_PULLDOWN)||(mode==INPUT_PULLUP))
     {
 		port_ptr->PCR[num_pin] |= PORT_PCR_PE(0b1);     // 1 Internal pullup or pulldown resistor is enabled on the corresponding pin, if the pin is configured as a digital input.
         if(mode==INPUT_PULLDOWN)
         {
             port_ptr->PCR[num_pin] |= PORT_PCR_PS(0b0); // 0 Internal pulldown resistor is enabled on the corresponding pin, if the corresponding PE field is set.
-        } 
+        }
         else if(mode==INPUT_PULLUP)
         {
             port_ptr->PCR[num_pin] |= PORT_PCR_PS(0b1); // 1 Internal pullup resistor is enabled on the corresponding pin, if the corresponding PE field is set.
-        }    		
+        }
 	}
     //-----------------------------------------------------------------
-    
+
     //----------------------- GPIO configuration ----------------------
-    //                        55.2.6 (pag. 1803)                                                    
+    //                        55.2.6 (pag. 1803)
     GPIO_Type* gpio_ptr = GPIO_PTRS[port];
     if(mode == OUTPUT)
     {
@@ -113,8 +115,8 @@ void gpioMode (pin_t pin, uint8_t mode)
         gpio_ptr->PDDR |= 0 << PIN2NUM(pin);
     }
     //-----------------------------------------------------------------
-
 }
+
 
 void gpioWrite (pin_t pin, bool value) {
 

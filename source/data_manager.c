@@ -94,8 +94,10 @@ void sendData (board current_board, uint8_t group, O_EVENT event){
     //the corresponding variation, at a max number of 999
     uint8_t c = (data/100)+'0';
     uint8_t d = (data/10)+'0';
-    if(d>=10);
-        d = d - 10;
+    if(d>=10){
+    	d = d - 10;
+    }
+
     uint8_t u = (data%10)+'0';
 
     //if the variation is not big enough
@@ -117,6 +119,7 @@ void sendData (board current_board, uint8_t group, O_EVENT event){
     //send message to pc
     uartWriteMsg(id, &message, MESSAGE_SIZE);
 
+    //to ensure the message is sent correctly a post check is executed
     while (!uartIsTxMsgComplete(id)){
         uartWriteMsg(id, &message, MESSAGE_SIZE);
     }

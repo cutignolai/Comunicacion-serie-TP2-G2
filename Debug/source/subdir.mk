@@ -13,9 +13,6 @@ C_SRCS += \
 ../source/timer.c \
 ../source/uart.c 
 
-O_SRCS += \
-../source/gpio.o 
-
 OBJS += \
 ./source/App.o \
 ./source/SysTick.o \

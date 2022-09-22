@@ -22,13 +22,18 @@
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
 
-typedef enum {ROLL_EVENT, PITCH_EVENT, YAW_EVENT, NO_EVENT} O_EVENT;
+typedef enum {
+	ROLL_EVENT,
+	PITCH_EVENT,
+	YAW_EVENT,
+	NO_EVENT
+} O_EVENT;		//orientation events
 
 typedef struct{
     int16_t roll;
     int16_t pitch;
     int16_t yaw;
-}board;
+}board;			//board meassures
 
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE

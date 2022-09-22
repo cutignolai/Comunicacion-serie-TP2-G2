@@ -61,7 +61,7 @@ uint16_t getPitch(void);
 
 uint16_t getYaw(void);
 
-uint8_t getGroup (void);      
+uint8_t getGroup (void);
 /*******************************************************************************
  *******************************************************************************
                         GLOBAL FUNCTION DEFINITIONS
@@ -126,11 +126,12 @@ void updateBoard(void){
 }
 
 void setBoard (void){
-    current_group = getGroup();
-    board* p = getBoards();
-    current_board.roll = (p+current_group)->roll;
-    current_board.pitch = (p+current_group)->pitch;
-    current_board.yaw = (p+current_group)->yaw;
+	//get the current board being used
+    board my_board = *(getBoards()+getGroup());
+    //update values to the board app.c is working with
+    current_board.roll = my_board.roll;
+    current_board.pitch = my_board.pitch;
+    current_board.yaw = my_board.yaw;
 }
 
 //testing functions
