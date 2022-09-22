@@ -138,9 +138,7 @@ board* getBoards(void){
  *******************************************************************************
  ******************************************************************************/
 
-uint8_t getGroup (void){    //for test purpose only will return our group number
-    return 2;               // this should be data saved the moment an interuption is generated and new data is available
-}
+
 
 /*******************************************************************************
  ******************************************************************************/

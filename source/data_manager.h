@@ -21,7 +21,7 @@
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
 
-typedef enum {ROLL_EVENT, PITCH_EVENT, YAW_EVENT} O_EVENT;
+typedef enum {ROLL_EVENT, PITCH_EVENT, YAW_EVENT, NO_EVENT} O_EVENT;
 
 typedef struct{
     int16_t roll;
@@ -48,7 +48,7 @@ void dataManager_init(void)
  */
 board* getBoards(void);
 
-uint8_t getGroup (void);       //indicates which group has sent data
+
 
 
 /**
