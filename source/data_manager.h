@@ -52,7 +52,7 @@ void dataManager_init(void);
  * @brief returns the matrix with all the board values
  * @return A pointer to an board type matrix
  */
-board* getBoards(void);
+board getBoard(uint8_t group);
 
 
 

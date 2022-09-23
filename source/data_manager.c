@@ -116,20 +116,17 @@ void sendData (board current_board, uint8_t group, O_EVENT event){
 
     //------------Post management----------------
     
-    //send message to pc
-    uartWriteMsg(id, &message, MESSAGE_SIZE);
-
-    //to ensure the message is sent correctly a post check is executed
+    uint8_t bytes;
     while (!uartIsTxMsgComplete(id)){
-        uartWriteMsg(id, &message, MESSAGE_SIZE);
+        bytes = uartWriteMsg(id, &message, MESSAGE_SIZE);
     }
 
 
 
 }
 
-board* getBoards(void){
-    return &boards;
+board getBoard(uint8_t group){
+    return boards[group-1];
 }
 
 /*******************************************************************************

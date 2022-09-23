@@ -127,7 +127,7 @@ void updateBoard(void){
 
 void setBoard (void){
 	//get the current board being used
-    board my_board = *(getBoards()+getGroup());
+    board my_board = getBoard(getGroup());
     //update values to the board app.c is working with
     current_board.roll = my_board.roll;
     current_board.pitch = my_board.pitch;
@@ -203,7 +203,7 @@ uint16_t getYaw(void){
 
 uint8_t getGroup (void){    //for test purpose only will return our group number
 	uint8_t group = 2;
-    return (group-1);           // this should be data saved the moment an interuption is generated and new data is available
+    return group;           // this should be data saved the moment an interuption is generated and new data is available
 }
 /*******************************************************************************
  ******************************************************************************/
