@@ -385,7 +385,9 @@ void uart_irq_handler(uint8_t id){
 	// Interrumpido por el TRANSMISOR
 	// Borra el flag: Leyendo S1 con TDRE
 	if ((uart->S1 & UART_S1_TDRE_MASK) && (!FIFO_IsBufferEmpty(tx_fifo[id]))) {			// Si no esta vacio entonces tengo para transmitir
-		bool transmition_correct = FIFO_PullFromBuffer(tx_fifo[id], &(uart -> D));		// Transmito	
+		fifo_value_t auxiliar;
+		bool transmition_correct = FIFO_PullFromBuffer(tx_fifo[id], &auxiliar);		// Transmito
+		uart -> D = auxiliar;
 	}
 	else{
 		uart->C2 &= ~UART_C2_TIE_MASK;													// Si el buffer esta vacio, entonces apago las interrupciones de transmision
