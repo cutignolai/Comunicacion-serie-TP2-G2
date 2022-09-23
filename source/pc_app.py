@@ -17,9 +17,9 @@ import threading
 import pygame
 from pygame import locals
 
-#checks wether a device was connected to a certain port
+# checks wether a device was connected to a certain port
 connected = False
-#buffer for communications via serial port
+# buffer for communications via serial port
 coms = None
 
 roll = np.zeros(5)
@@ -46,7 +46,6 @@ texts = [
 
 dataQueue = []
 
-
 codes = {
     "1": 0,
     "2": 1,
@@ -56,14 +55,13 @@ codes = {
 }
 
 
-
-
 def drawText(position, textString, color):
     font = pygame.font.Font(None, 50)
     textSurface = font.render(textString, True, (color[0], color[1], color[2], 255), (0, 0, 0, 255))
     textData = pygame.image.tostring(textSurface, "RGBA", True)
     glRasterPos3d(*position)
     glDrawPixels(textSurface.get_width(), textSurface.get_height(), GL_RGBA, GL_UNSIGNED_BYTE, textData)
+
 
 def smallDrawText(position, textString, color):
     font = pygame.font.Font(None, 30)
@@ -72,37 +70,39 @@ def smallDrawText(position, textString, color):
     glRasterPos3d(*position)
     glDrawPixels(textSurface.get_width(), textSurface.get_height(), GL_RGBA, GL_UNSIGNED_BYTE, textData)
 
-#decodes the information received according to a transmition code made
+
+# decodes the information received according to a transmition code made
 def manageInfo(info):
     try:
-        #group number
+        # group number
         group = int(info[1])
         group -= 1
-        #roll, pitch or yaw
+        # roll, pitch or yaw
         rpy = info[2]
-        #+- the value variation
-        sign = info [3]
-        value = int(info[4])*100 + int(info[5])*10 + int(info[6])
+        # +- the value variation
+        sign = info[3]
+        value = int(info[4]) * 100 + int(info[5]) * 10 + int(info[6])
         if sign == "-":
             value = -value
-        
+
         return group, rpy, value
-        
+
     except:
         print("¡A problem has appeard receiving information!")
         return None
 
-#based on the processed information updates the current data        
+
+# based on the processed information updates the current data
 def ReadData():
     global connected
     global coms
-   
+
     while True:
 
         pygame.time.wait(10)
 
-        #testing
-        #connected = True
+        # testing
+        # connected = True
 
         if not connected:
             try:
@@ -113,10 +113,10 @@ def ReadData():
                 for p in ports:
                     available_ports.append(p.device)
 
-                #print("Available ports: " + str(available_ports))
-                #port = input("Select a port number: ")
+                # print("Available ports: " + str(available_ports))
+                # port = input("Select a port number: ")
 
-                coms = serial.Serial('COM6', baudrate=9600, timeout=1)
+                coms = serial.Serial('COM3', baudrate=9600, timeout=1)
 
                 print("Connected!")
                 connected = True
@@ -125,34 +125,39 @@ def ReadData():
                 print("Trying to connect ... ")
         else:
             try:
-                #data that entries via serial port  
-                incomming_info = ""
-                #buffer for such data
+                # data that entries via serial port
+                #incomming_info = ""
+                # buffer for such data
                 port_data = ""
-                if incomming_info == 'S':               #start sentinel
 
-                    while incomming_info != 'E':        #check for 'w' if it doesn't work, end sentinel
+                incomming_info = coms.read()
+                print("USB received: ", incomming_info)
+                incomming_info = incomming_info.decode("ascii")
+                print("USB decoded: ", incomming_info)
+
+                if incomming_info == 'S':  # start sentinel
+
+                    while incomming_info != 'E':  # check for 'w' if it doesn't work, end sentinel
                         try:
-                            #reads port data
-                            incomming_info = coms.read().decode("ascii")
-                            #adds data to the buffer for post processing
+                            # reads port data
+                            incomming_info = coms.read()
+                            incomming_info = incomming_info.decode("ascii")
+                            # adds data to the buffer for post processing
                             port_data += incomming_info
                         except:
                             pass
 
-                    port_data = port_data[-5:-1]       
-
+                    port_data = port_data[-5:-1]
 
                     dataString = str(port_data)
-                    #print("Information received: ", dataString)   
-               
+                    print("Information received: ", dataString)
 
                     if dataString != "":
                         try:
-                            #process data
+                            # process data
                             group, rpy, value = manageInfo(dataString)
-                        
-                            #updates the rpy value on their corresponding group
+
+                            # updates the rpy value on their corresponding group
                             if rpy == "R":
                                 roll[group] = value
                             if rpy == "P":
@@ -177,21 +182,20 @@ def main():
         run = False
         window.destroy()
 
-
     pygame.init()
     display = (800, 600)
     pygame.display.set_caption('TP2 Labo de micros G2')
     pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
 
-    gluPerspective(45, (display[0]/display[1]), 0.1, 50.0)
+    gluPerspective(45, (display[0] / display[1]), 0.1, 50.0)
 
-    #glTranslatef(0.0, 0.0, -1)
+    # glTranslatef(0.0, 0.0, -1)
 
     glRotatef(0, 0, 0, 0)
 
-    coms= None
+    coms = None
 
-    t1 = threading.Thread(target = ReadData, args = ())
+    t1 = threading.Thread(target=ReadData, args=())
     t1.start()
 
     while True:
@@ -223,19 +227,17 @@ def main():
                 if event.type == pygame.KEYUP:
                     keys[event.key] = 0
 
+        # print(status)
 
-        #print(status)
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+        drawText((positions[0] - 1, 2, -10), texts[selected_board], (255, 255, 255))
+        # smallDrawText((positions[0]-1, 1, -10), "(Press enter)",(255,255,255))
 
+        drawText((positions[0] - 2, -6, -18), "Roll: %d " % roll[selected_board], (255, 0, 0))
+        drawText((positions[0] - 2, -4, -18), "Pitch: %d " % pitch[selected_board], (0, 0, 255))
+        drawText((positions[0] - 2, -2, -18), "Yaw: %d " % yaw[selected_board], (0, 255, 0))
 
-        drawText((positions[0]-1, 2, -10), texts[selected_board], (255, 255, 255))
-        #smallDrawText((positions[0]-1, 1, -10), "(Press enter)",(255,255,255))
-
-        drawText((positions[0]-2, -6, -18), "Roll: %d " % roll[selected_board], (255, 0, 0))
-        drawText((positions[0]-2, -4, -18), "Pitch: %d " % pitch[selected_board], (0, 0, 255))
-        drawText((positions[0]-2, -2, -18), "Yaw: %d " % yaw[selected_board], (0, 255, 0))
-        
         if enterPressed:
             showRoll[selected_board] = 0
             showPitch[selected_board] = 0
@@ -243,16 +245,11 @@ def main():
 
             targetShowRolido[selected_board] = roll[selected_board]
             targetShowCabeceo[selected_board] = pitch[selected_board]
-            targetShowOrientacion[selected_board] = yaw[selected_board]                
+            targetShowOrientacion[selected_board] = yaw[selected_board]
 
         pygame.display.flip()
-        #pygame.time.wait(10)
-
-
-
-
+        # pygame.time.wait(10)
 
 
 if __name__ == '__main__':
-
     main()

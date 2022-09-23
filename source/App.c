@@ -139,7 +139,7 @@ void setBoard (void){
 
 void genData(void)
 {
-    uint32_t veces = 4000000UL;
+    uint32_t veces = 14000000UL;
     while (veces--);
     if (rand_event == 0){
         periferic.roll += 30;

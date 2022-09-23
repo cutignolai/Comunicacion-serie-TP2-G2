@@ -31,6 +31,8 @@ static board boards[GROUPS];
 static uint8_t id;
 static uart_cfg_t config;
 
+static uint8_t message_count = 0;
+
 /*******************************************************************************
  *         FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
@@ -124,6 +126,8 @@ void sendData (board current_board, uint8_t group, O_EVENT event){
     //End sentinel
     message[7] = ES;
 
+
+    	//S2R+030E
     //------------Post management----------------
     
     uint8_t bytes;
@@ -131,6 +135,16 @@ void sendData (board current_board, uint8_t group, O_EVENT event){
     /*while (!uartIsTxMsgComplete(id)){
         bytes = uartWriteMsg(id, &message[0], MESSAGE_SIZE);
     }*/
+
+    /*printf("message count: %d \n", message_count);
+    message_count++;
+
+    uint8_t i;
+    printf("message:");
+    for (i=0; i<8;i++){
+    	printf("%c", message[i]);
+    }
+    printf("\n");*/
 
 
 
