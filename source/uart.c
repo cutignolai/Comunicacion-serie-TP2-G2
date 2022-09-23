@@ -113,7 +113,7 @@ void uartInit (uint8_t id, uart_cfg_t config)
 	port_ptr->PCR[uart_tx_pin]|=PORT_PCR_IRQC(0b0000); //Disable Port interrupts
 	
 	// RX:
-	port_ptr->PCR[uart_rx_pin]= 0x0; //Clear all bits
+	//port_ptr->PCR[uart_rx_pin]= 0x0; //Clear all bits
 	port_ptr->PCR[uart_rx_pin]|=PORT_PCR_MUX(0b11); //Set MUX to UART0
 	port_ptr->PCR[uart_rx_pin]|=PORT_PCR_IRQC(0b0000); //Disable Port interrupts
 

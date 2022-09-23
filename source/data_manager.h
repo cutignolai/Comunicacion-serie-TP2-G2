@@ -23,10 +23,10 @@
  ******************************************************************************/
 
 typedef enum {
+	NO_EVENT,
 	ROLL_EVENT,
 	PITCH_EVENT,
-	YAW_EVENT,
-	NO_EVENT
+	YAW_EVENT
 } O_EVENT;		//orientation events
 
 typedef struct{

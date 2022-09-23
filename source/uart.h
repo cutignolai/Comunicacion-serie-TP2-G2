@@ -38,7 +38,7 @@
  ******************************************************************************/
 
 typedef struct {
-    uint8_t baud_rate;   // Numeros de cambio de la senial por segundo
+    uint32_t baud_rate;   // Numeros de cambio de la senial por segundo
     bool non_blocking;
     bool want_parity;
 	bool data_9bits;

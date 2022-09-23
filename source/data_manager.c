@@ -46,7 +46,16 @@ static uart_cfg_t config;
 
 void dataManager_init(void){
 
-    id = 0;   
+    id = 0;
+
+    config.baud_rate = 9600;
+    config.non_blocking = 0;
+    config.want_parity = 0;   
+    config.data_9bits = 0;
+    config.parity_type = 0;
+    config.double_stop_bit = 0;
+    config.use_fifo = 1;
+    config.bit_rate = 0;        //check later
     uartInit (id, config);
 
 }
@@ -55,7 +64,7 @@ void sendData (board current_board, uint8_t group, O_EVENT event){
 
     //------------Message generation----------------
     // meesage: SS-Group number-Event-Sign-Value-ES
-    char message[8];
+    char message[MESSAGE_SIZE];
     int16_t data;
 
     //Start sentinel
@@ -68,7 +77,7 @@ void sendData (board current_board, uint8_t group, O_EVENT event){
     case ROLL_EVENT:
         message[2] = 'R';
         data = current_board.roll;
-        boards[group].roll = current_board.roll;
+        boards[group-1].roll = current_board.roll;
         break;
     case PITCH_EVENT:
         message[2] = 'P';
@@ -92,12 +101,13 @@ void sendData (board current_board, uint8_t group, O_EVENT event){
     }
 
     //the corresponding variation, at a max number of 999
-    uint8_t c = (data/100)+'0';
-    uint8_t d = (data/10)+'0';
+    uint8_t c = (data/100);
+    uint8_t d = (data/10);
     if(d>=10){
-    	d = d - 10;
+    	d = d - 10*c;
     }
-
+    d = d + '0';
+    c = c + '0';
     uint8_t u = (data%10)+'0';
 
     //if the variation is not big enough
@@ -117,9 +127,10 @@ void sendData (board current_board, uint8_t group, O_EVENT event){
     //------------Post management----------------
     
     uint8_t bytes;
-    while (!uartIsTxMsgComplete(id)){
-        bytes = uartWriteMsg(id, &message, MESSAGE_SIZE);
-    }
+    bytes = uartWriteMsg(id, &message[0], MESSAGE_SIZE);
+    /*while (!uartIsTxMsgComplete(id)){
+        bytes = uartWriteMsg(id, &message[0], MESSAGE_SIZE);
+    }*/
 
 
 

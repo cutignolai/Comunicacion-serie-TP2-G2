@@ -127,7 +127,8 @@ void updateBoard(void){
 
 void setBoard (void){
 	//get the current board being used
-    board my_board = getBoard(getGroup());
+	current_group = getGroup();
+    board my_board = getBoard(current_group);
     //update values to the board app.c is working with
     current_board.roll = my_board.roll;
     current_board.pitch = my_board.pitch;
@@ -168,14 +169,14 @@ O_EVENT GetPositionEvent(void){
     if (position_event){
         switch (rand_event)
         {
-            case 0:
+            case 1:
                 my_event = ROLL_EVENT;
                 break;
             
-            case 1:
+            case 2:
                 my_event = PITCH_EVENT;
                 break;
-            case 2:
+            case 3:
                 my_event = YAW_EVENT;
                 break;
             default:
