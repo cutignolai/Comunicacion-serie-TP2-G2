@@ -15,7 +15,7 @@
 /*******************************************************************************
  * 					CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
-
+const uint16_t PORT_SCG[] = {SIM_SCGC5_PORTA_MASK, SIM_SCGC5_PORTB_MASK, SIM_SCGC5_PORTC_MASK, SIM_SCGC5_PORTD_MASK, SIM_SCGC5_PORTE_MASK};
 #define UART_HAL_DEFAULT_BAUDRATE 9600
 #define TX_RX	2
 
@@ -107,15 +107,19 @@ void uartInit (uint8_t id, uart_cfg_t config)
 	PORT_Type* port_ptr = addr_arrays[id];
 	pin_t uart_tx_pin = TX_PINS[id];
 	pin_t uart_rx_pin = RX_PINS[id];
+
+	SIM->SCGC5 |= PORT_SCG[PIN2PORT(uart_tx_pin)];
+	SIM->SCGC5 |= PORT_SCG[PIN2PORT(uart_rx_pin)];
+
 	// TX:
-	port_ptr->PCR[uart_tx_pin] = 0x0; //Clear all bits
-	port_ptr->PCR[uart_tx_pin]|=PORT_PCR_MUX(0b11); //Set MUX to UART
-	port_ptr->PCR[uart_tx_pin]|=PORT_PCR_IRQC(0b0000); //Disable Port interrupts
+	port_ptr->PCR[PIN2NUM(uart_tx_pin)] = 0x0; //Clear all bits
+	port_ptr->PCR[PIN2NUM(uart_tx_pin)]|=PORT_PCR_MUX(0b11); //Set MUX to UART
+	port_ptr->PCR[PIN2NUM(uart_tx_pin)]|=PORT_PCR_IRQC(0b0000); //Disable Port interrupts
 	
 	// RX:
 	//port_ptr->PCR[uart_rx_pin]= 0x0; //Clear all bits
-	port_ptr->PCR[uart_rx_pin]|=PORT_PCR_MUX(0b11); //Set MUX to UART0
-	port_ptr->PCR[uart_rx_pin]|=PORT_PCR_IRQC(0b0000); //Disable Port interrupts
+	port_ptr->PCR[PIN2NUM(uart_rx_pin)]|=PORT_PCR_MUX(0b11); //Set MUX to UART0
+	port_ptr->PCR[PIN2NUM(uart_rx_pin)]|=PORT_PCR_IRQC(0b0000); //Disable Port interrupts
 
 
 
@@ -174,9 +178,6 @@ uint8_t uartReadMsg(uint8_t id, char* msg, uint8_t cant){
 	else{
 		UART_Type* uart = UART_ptrs[id];
 		size_t long_buff_rx = FIFO_ReadFromBuffer(rx_fifo[id], msg, cant);
-		if(long_buff_rx < cant){
-			size_t long_buff_tx = FIFO_ReadFromBuffer(tx_fifo[id], msg[long_buff_tx], cant - long_buff_tx);			//me pisa El First In  ---> TODO: PREGUNTAR OLI
-		}
 	return (long_buff_rx < cant) ? long_buff_rx : cant;
 	}
 }
@@ -189,9 +190,6 @@ uint8_t uartWriteMsg(uint8_t id, const char* msg, uint8_t cant){
 	else{
 		UART_Type* uart = UART_ptrs[id];
 		size_t long_buff_tx = FIFO_WriteToBuffer(tx_fifo[id], msg, cant);
-		if(long_buff_tx < cant){
-			size_t long_buff_tx = FIFO_WriteToBuffer(tx_fifo[id], msg[long_buff_tx], cant - long_buff_tx);			//me pisa El First In  ---> TODO: PREGUNTAR OLI
-		}
 		//HABILITO TRANSMISION
 		uart->C2 |= UART_C2_TIE_MASK;
 		return true;
@@ -392,12 +390,11 @@ void uart_irq_handler(uint8_t id){
 	else{
 		uart->C2 &= ~UART_C2_TIE_MASK;													// Si el buffer esta vacio, entonces apago las interrupciones de transmision
 	}
-
-
 	// Interrumpido por el RECEPTOR
 	// Borra el flag: Leyendo S1 with RDRF y leyendo D 
-	if ((uart -> S1 & UART_S1_RDRF_MASK) && (!FIFO_IsBufferEmpty(rx_fifo[id]))) {
-		bool reception_read = FIFO_PushToBuffer(rx_fifo[id], uart -> D);				// Guardo caracter recibido
+	if ((uart -> S1 & UART_S1_RDRF_MASK) && !(FIFO_IsBufferFull(rx_fifo[id]))) {
+		fifo_value_t auxil = uart -> D;
+		bool reception_read = FIFO_PushToBuffer(rx_fifo[id], auxil);				// Guardo caracter recibido
 		//FLAGS FALTAN??
 	}
 }
