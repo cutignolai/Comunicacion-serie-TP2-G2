@@ -141,10 +141,10 @@ def ReadData():
                 for p in ports:
                     available_ports.append(p.device)
 
-                #print("Available ports: " + str(available_ports))
-                #port = input("Select a port number: ")
+                print("Available ports: " + str(available_ports))
+                port = input("Select a port number: ")
 
-                coms = serial.Serial('COM5', baudrate=9600, timeout=1)
+                coms = serial.Serial(port, baudrate=9600, timeout=1)
 
                 print("Connected!")
                 connected = True
