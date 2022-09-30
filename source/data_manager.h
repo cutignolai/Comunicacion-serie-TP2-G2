@@ -17,17 +17,17 @@
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
+#define MESSAGE_LENGHT 18   //SS+G+RPY+ES   
+#define M_GROUP 1
+#define M_ROLL 2
+#define M_PITCH 7
+#define M_YAW 12
 
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
 
-typedef enum {
-	NO_EVENT,
-	ROLL_EVENT,
-	PITCH_EVENT,
-	YAW_EVENT
-} O_EVENT;		//orientation events
+
 
 typedef struct{
     int16_t roll;
@@ -61,9 +61,8 @@ board getBoard(uint8_t group);
  * @brief sends the data that changed to the pc via UART protocol
  * @param current_board the board being modified with it's current values
  * @param group group number of such board
- * @param event modification made to the board
  */
-void sendData (board current_board, uint8_t group, O_EVENT event);
+void sendData (board current_board, uint8_t group);
 
 
 /*******************************************************************************

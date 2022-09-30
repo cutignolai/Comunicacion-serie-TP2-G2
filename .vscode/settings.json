@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "pc_translator.h": "c"
+        "pc_translator.h": "c",
+        "data_manager.h": "c"
     }
 }

@@ -14,12 +14,11 @@
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
-#define GROUPS 5
+#define GROUPS 6
 
 //message defines
 #define SS  'S'
 #define ES  'E'
-#define MESSAGE_SIZE 8
 
 
 
@@ -30,14 +29,14 @@
 static board boards[GROUPS];
 static uint8_t id;
 static uart_cfg_t config;
+static char message[MESSAGE_LENGHT];
 
-static uint8_t message_count = 0;
 
 /*******************************************************************************
  *         FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
 
-
+void add_angle(uint8_t position, int16_t angle);
 
 
 /*******************************************************************************
@@ -62,76 +61,40 @@ void dataManager_init(void){
 
 }
 
-void sendData (board current_board, uint8_t group, O_EVENT event){
+void sendData (board current_board, uint8_t group){
 
     //------------Message generation----------------
     // meesage: SS-Group number-Event-Sign-Value-ES
-    char message[MESSAGE_SIZE];
-    int16_t data;
+    
+
 
     //Start sentinel
     message[0] = SS;
     //Group number
-    message[1] = group + '0';
+    message[M_GROUP] = group + '0';
     //Roll, pitch or yaw
-    switch (event)        
-    {
-    case ROLL_EVENT:
-        message[2] = 'R';
-        data = current_board.roll;
-        boards[group-1].roll = current_board.roll;
-        break;
-    case PITCH_EVENT:
-        message[2] = 'P';
-        data = current_board.pitch;
-        boards[group].pitch = current_board.pitch;
-        break;
-    case YAW_EVENT:
-        message[2] = 'Y';
-        data = current_board.yaw;
-        boards[group].yaw = current_board.yaw;
-        break;
-    default:
-        break;
-    }
-    //In what direction does the change ocurr
-    if (data>0)
-        message[3] = '+';
-    else {
-    message[3] = '-';
-    data = -data;
-    }
+   
+    message[M_ROLL] = 'R';
+    add_angle(M_ROLL, current_board.roll);
+    boards[group].roll = current_board.roll;
 
-    //the corresponding variation, at a max number of 999
-    uint8_t c = (data/100);
-    uint8_t d = (data/10);
-    if(d>=10){
-    	d = d - 10*c;
-    }
-    d = d + '0';
-    c = c + '0';
-    uint8_t u = (data%10)+'0';
+    message[M_PITCH] = 'P';
+    add_angle(M_PITCH, current_board.pitch);
+    boards[group].pitch = current_board.pitch;
 
-    //if the variation is not big enough
-    if ((c == 0) && (d == 0) && (u <= 5)){   
-        message[4] = 0;
-        message[5] = 0;
-        message[6] = 0;
-    }
-    else{
-        message[4] = c;
-        message[5] = d;
-        message[6] = u;
-    }
+    message[M_YAW] = 'Y';
+    add_angle(M_YAW, current_board.yaw);
+    boards[group].yaw = current_board.yaw;
+    
     //End sentinel
-    message[7] = ES;
+    message[MESSAGE_LENGHT-1] = ES;
 
 
     	//S2R+030E
     //------------Post management----------------
     
     uint8_t bytes;
-    bytes = uartWriteMsg(id, &message[0], MESSAGE_SIZE);
+    bytes = uartWriteMsg(id, &message[0], MESSAGE_LENGHT);
     /*while (!uartIsTxMsgComplete(id)){
         bytes = uartWriteMsg(id, &message[0], MESSAGE_SIZE);
     }*/
@@ -163,6 +126,36 @@ board getBoard(uint8_t group){
  *******************************************************************************
  ******************************************************************************/
 
+void add_angle(uint8_t position, int16_t angle){
+    //In what direction does the change ocurr
+    uint16_t data;
+
+    if (angle>0){
+        message[position + 1] = '+';
+        data = angle;
+    }
+        
+    else {
+        message[position + 1] = '-';
+        data = -angle;
+    }
+    
+
+
+    //the corresponding variation, at a max number of 999
+    uint8_t c = (data/100);
+    uint8_t d = (data/10);
+    if(d>=10){
+    	d = d - 10*c;
+    }
+    d = d + '0';
+    c = c + '0';
+    uint8_t u = (data%10)+'0';
+
+    message[position + 2] = c;
+    message[position + 3] = d;
+    message[position + 4] = u;
+}
 
 
 /*******************************************************************************

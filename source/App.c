@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 
+
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
@@ -30,17 +31,17 @@
 
 static board current_board;
 static uint8_t current_group;
+static char* can_message_ptr;
 
 //testing
 static uint8_t rand_event;
 static bool position_event;
+static bool data_event;
 static board periferic;
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
-
-O_EVENT GetPositionEvent(void);   
 
 
 void GetPositionChange(void);
@@ -49,11 +50,13 @@ void setBoard (void);
 
 void updateBoard(void);
 
+bool checkAngle (int16_t angle);
+
 //testing
 
 void genData(void);
 
-O_EVENT GetPositionEvent(void);
+bool GetDataEvent(void);
 
 uint16_t getRoll(void);
 
@@ -62,6 +65,8 @@ uint16_t getPitch(void);
 uint16_t getYaw(void);
 
 uint8_t getGroup (void);
+
+char* getChange(void);
 /*******************************************************************************
  *******************************************************************************
                         GLOBAL FUNCTION DEFINITIONS
@@ -77,6 +82,7 @@ void App_Init (void)
     //testing
     rand_event = 0;
     position_event = false; 
+    data_event = false;
     periferic.roll = 0;
     periferic.pitch = 0;
     periferic.yaw = 0;
@@ -101,41 +107,100 @@ void App_Run (void)
  ******************************************************************************/
 void updateBoard(void){
 
-    switch(GetPositionEvent()){
-        case ROLL_EVENT:
-            setBoard();
-            current_board.roll = getRoll();
-            sendData(current_board, current_group, ROLL_EVENT);
-            break;
-        case PITCH_EVENT:
-            setBoard();       
-            current_board.pitch = getPitch();
-            sendData(current_board, current_group, PITCH_EVENT);
-            break;
-        case YAW_EVENT:
-            setBoard();        
-            current_board.yaw = getYaw();
-            sendData(current_board, current_group, YAW_EVENT);
-            break;
-        default:
-        	//do nothing
-        	break;
+    if(GetDataEvent()){
+        data_event = false;                     //turn off flag
+
+        char message []= "S2R+030P-050Y+100E";
+
+        can_message_ptr = &message[0];          //get the pointer to the new message
+        setBoard();                             //set the board ready to update         
+        sendData(current_board, current_group); //send board to pc  
+
     }
-    //testing -> turns off the event so 
-    position_event = false;
 }
 
 void setBoard (void){
 	//get the current board being used
-	current_group = getGroup();
-    board my_board = getBoard(current_group);
-    //update values to the board app.c is working with
-    current_board.roll = my_board.roll;
-    current_board.pitch = my_board.pitch;
-    current_board.yaw = my_board.yaw;
+	current_group = *(can_message_ptr + M_GROUP) - '0';
+
+    int16_t roll;
+    int16_t pitch;
+    int16_t yaw;
+
+    int16_t c = *(can_message_ptr + M_ROLL + 2) - '0';
+    int16_t d = *(can_message_ptr + M_ROLL + 3) - '0';
+    int16_t u = *(can_message_ptr + M_ROLL + 4) - '0';
+
+    roll = c*100 + d*10 + u;
+
+    if ((*(can_message_ptr + M_ROLL + 1)) == '-')
+        roll = -roll;
+
+    
+
+    c = *(can_message_ptr + M_PITCH + 2) - '0';
+    d = *(can_message_ptr + M_PITCH + 3) - '0';
+    u = *(can_message_ptr + M_PITCH + 4) - '0';
+
+    pitch = c*100 + d*10 + u;
+
+    if ((*(can_message_ptr + M_PITCH + 1)) == '-')
+        pitch = -pitch;
+   
+
+    c = *(can_message_ptr + M_YAW + 2) - '0';
+    d = *(can_message_ptr + M_YAW + 3) - '0';
+    u = *(can_message_ptr + M_YAW + 4) - '0';
+
+    yaw = c*100 + d*10 + u;
+
+    if ((*(can_message_ptr + M_YAW + 1)) == '-')
+        yaw = -yaw;
+    
+
+    if(checkAngle(roll))
+        if (checkAngle(pitch))
+            if(checkAngle(yaw)){
+                current_board.roll = roll;
+                current_board.pitch = pitch;
+                current_board.yaw = yaw;
+            }
+            else{                           //AGREGAR FLAG DE ERROR
+                current_board.roll = 0;
+                current_board.pitch = 0;
+                current_board.yaw = 0;
+            }
+        else{                           
+            current_board.roll = 0;
+            current_board.pitch = 0;
+            current_board.yaw = 0;
+        }
+    else{                           
+        current_board.roll = 0;
+        current_board.pitch = 0;
+        current_board.yaw = 0;
+    }
+}
+
+int16_t getMessageNum (void){
+    
+}
+
+bool checkAngle (int16_t angle){
+    if (angle > 180)
+        return false;
+    if (angle < -180)
+        return false;
+    else
+        return true;
 }
 
 //testing functions
+
+char* getChange(void){
+    char message []= "S2R+030P-050Y+100E";
+    return &message[0];
+}
 
 void genData(void)
 {
@@ -160,35 +225,13 @@ void genData(void)
         rand_event = 0;
         position_event = false;
     }
-    
-    
 }
 
-O_EVENT GetPositionEvent(void){
-    O_EVENT my_event;
-    if (position_event){
-        switch (rand_event)
-        {
-            case 1:
-                my_event = ROLL_EVENT;
-                break;
-            
-            case 2:
-                my_event = PITCH_EVENT;
-                break;
-            case 3:
-                my_event = YAW_EVENT;
-                break;
-            default:
-                my_event = NO_EVENT;
-                break;
-        }
-        return my_event;
-    }
-    else
-        return NO_EVENT;
-    
+bool GetDataEvent(void){
+    return true;
 }
+
+
 
 uint16_t getRoll(void){
     return periferic.roll;
