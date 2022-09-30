@@ -23,9 +23,9 @@ connected = False
 # buffer for communications via serial port
 coms = None
 
-roll = np.zeros(5)
-pitch = np.zeros(5)
-yaw = np.zeros(5)
+roll = np.zeros(7)
+pitch = np.zeros(7)
+yaw = np.zeros(7)
 
 showRoll = np.zeros(8)
 showPitch = np.zeros(8)
@@ -38,6 +38,7 @@ targetShowOrientacion = np.zeros(8)
 keys = {pygame.K_RETURN: 0}
 
 texts = [
+    "Board 0",
     "Board 1",
     "Board 2",
     "Board 3",
@@ -48,11 +49,12 @@ texts = [
 dataQueue = []
 
 codes = {
-    "1": 0,
-    "2": 1,
-    "3": 2,
-    "4": 3,
-    "5": 4
+    "0": 0,
+    "1": 1,
+    "2": 2,
+    "3": 3,
+    "4": 4,
+    "5": 5
 }
 
 def InitPygame():
@@ -139,10 +141,10 @@ def ReadData():
                 for p in ports:
                     available_ports.append(p.device)
 
-                # print("Available ports: " + str(available_ports))
-                # port = input("Select a port number: ")
+                #print("Available ports: " + str(available_ports))
+                #port = input("Select a port number: ")
 
-                coms = serial.Serial('COM3', baudrate=9600, timeout=1)
+                coms = serial.Serial('COM5', baudrate=9600, timeout=1)
 
                 print("Connected!")
                 connected = True
@@ -225,6 +227,11 @@ def DrawData():
     smallDrawText((-7, -12.5, -18), "Pitch: %d " % pitch[4], (255, 255, 255))
     smallDrawText((-7, -15, -18), "Yaw: %d " % yaw[4], (255, 255, 255))
 
+    drawText((12, -2, -10), texts[5], (255, 255, 255))
+    smallDrawText((18, -10, -18), "Roll: %d " % roll[5], (255, 255, 255))
+    smallDrawText((18, -12.5, -18), "Pitch: %d " % pitch[5], (255, 255, 255))
+    smallDrawText((18, -15, -18), "Yaw: %d " % yaw[5], (255, 255, 255))
+
 def axis():
     glColor3f(0, 0, 1)
 
@@ -287,31 +294,39 @@ def DrawGL(index):
     glRotatef(roll[index], -1, 0, 0)
     glRotatef(yaw[index], 0, 1, 0)
 
-    drawText((-4, 10, -10), texts[index], (255, 255, 255))
-    smallDrawText((-25, -15, -18), "Roll: %d " % roll[index], (255, 255, 255))
-    smallDrawText((-5, -15, -18), "Pitch: %d " % pitch[index], (255, 255, 255))
-    smallDrawText((15, -15, -18), "Yaw: %d " % yaw[index], (255, 255, 255))
 
-    #gnum = str(index)
-    #NewDrawText("Board "+ gnum)
+    #drawText((-4, 10, -10), texts[index], (255, 255, 255))
+    #smallDrawText((-25, -15, -18), "Roll: %d " % roll[index], (255, 255, 255))
+    #smallDrawText((-5, -15, -18), "Pitch: %d " % pitch[index], (255, 255, 255))
+    #smallDrawText((15, -15, -18), "Yaw: %d " % yaw[index], (255, 255, 255))
+
+    gnum = str(index)
+    NewDrawText("       Board "+ gnum)
     #NewDrawText("Roll: {}° Pitch: {}° Yaw: {}°".format(round(roll[index],1),round(pitch[index],1), round(yaw[index],1)))
     #DrawText("Roll: {}°               Pitch: {}°".format(round(myimu.Roll,1),round(myimu.Pitch,1)))
     DrawBoard()
     #pygame.display.flip()
 
 def EventManager(selected_board):
-    if selected_board == 0:
+    if selected_board == 10:
+        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+        glLoadIdentity() 
+        gluPerspective(90, (display[0]/display[1]), 0.1, 50.0)
+        glTranslatef(0.0,0.0, -5)   
+
+        glRotatef(pitch[6], 0, 0, 1)
+        glRotatef(roll[6], -1, 0, 0)
+        glRotatef(yaw[6], 0, 1, 0)
         DrawData()
     else:
-        DrawGL(selected_board-1)
+        DrawGL(selected_board)
     
     
 
 def main():
     global coms
     global showRoll, showPitch, showYaw, targetShowCabeceo, targetShowOrientacion, targetShowRolido
-    selected_board = 0
-
+    selected_board = 10
     def on_closing():
         global run
         run = False
@@ -342,25 +357,26 @@ def main():
             if event.type == pygame.KEYDOWN:
                 #navigating through 3D boards
                 if event.key == pygame.K_LEFT:
-                    if selected_board > 1:
-                        selected_board -= 1
+                    if selected_board >= 0:
+                        if selected_board < 10:
+                            selected_board -= 1
                 if event.key == pygame.K_LEFT:
-                    if selected_board == 1:
+                    if selected_board == -1:
                         selected_board = 5
                 if event.key == pygame.K_RIGHT:
-                    if selected_board < 5:
-                        if selected_board > 0:
+                    if selected_board < 6:
+                        if selected_board >= 0:
                             selected_board += 1
                 if event.key == pygame.K_RIGHT:
-                    if selected_board == 5:
-                        selected_board = 1
+                    if selected_board == 6:
+                        selected_board = 0
                 #on main stage it doesn't change
                 if event.key == pygame.K_LEFT:
-                    if selected_board == 0:
-                        selected_board = 0
+                    if selected_board == 10:
+                        selected_board = 10
                 if event.key == pygame.K_RIGHT:
-                    if selected_board == 0:
-                        selected_board = 0
+                    if selected_board == 10:
+                        selected_board = 10
                 #selecting a display, 0 for general view, otherwise select a board from 1 to 5
                 if event.key == pygame.K_0:
                     selected_board = 0
@@ -374,6 +390,9 @@ def main():
                     selected_board = 4
                 if event.key == pygame.K_5:
                     selected_board = 5
+                if event.key == pygame.K_m:
+                    selected_board = 10
+                
 
                 #testing
                 if event.key == pygame.K_6:
@@ -388,6 +407,10 @@ def main():
                     yaw[1] += 10
                     if yaw[1] > 180:
                         yaw[1] -= 360
+                if event.key == pygame.K_9:
+                    roll[0] += 50
+                    if roll[0] > 180:
+                        roll[0] -= 360
 
                 if event.type == pygame.KEYDOWN:
                     keys[event.key] = 1
