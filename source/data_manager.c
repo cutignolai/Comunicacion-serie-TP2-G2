@@ -102,13 +102,13 @@ void sendData (board current_board, uint8_t group){
     /*printf("message count: %d \n", message_count);
     message_count++;*/
 
-    uint8_t i;
+    /*uint8_t i;
     char* ptr = &message[0];
     printf("message:");
     for (i=0; i<18;i++){
     	printf("%c", *(ptr+i));
     }
-    printf("\n");
+    printf("\n");*/
 
 
 

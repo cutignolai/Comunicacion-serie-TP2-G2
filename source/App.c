@@ -110,9 +110,29 @@ void updateBoard(void){
     if(GetDataEvent()){
         data_event = false;                     //turn off flag
 
-        char message []= "S2R+030P-050Y+100E";
+        //codigo de testeo
 
-        can_message_ptr = &message[0];          //get the pointer to the new message
+        if (rand_event == 0){
+        	char message1 []= "S2R+030P-050Y+100E";
+        	can_message_ptr = &message1[0];
+        	rand_event++;
+        }
+        else if ((rand_event == 1) || (rand_event == 3)){
+			char message2 []= "S2R+045P-075Y+125E";
+			can_message_ptr = &message2[0];
+			rand_event++;
+		}
+        else if (rand_event == 2){
+			char message3 []= "S2R+060P-100Y+150E";
+			can_message_ptr = &message3[0];
+			rand_event++;
+		}
+        if (rand_event == 4)
+        	rand_event = 0;
+
+
+
+        //can_message_ptr = &message[0];          //get the pointer to the new message
         setBoard();                             //set the board ready to update         
         sendData(current_board, current_group); //send board to pc  
 

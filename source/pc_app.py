@@ -102,18 +102,29 @@ def smallDrawText(position, textString, color):
 # decodes the information received according to a transmition code made
 def manageInfo(info):
     try:
-        # group number
-        group = int(info[1])
-        group -= 1
-        # roll, pitch or yaw
-        rpy = info[2]
+        # group number 2   R+060   P-100   Y+150   E
+        group = int(info[0])
         # +- the value variation
-        sign = info[3]
-        value = int(info[4]) * 100 + int(info[5]) * 10 + int(info[6])
-        if sign == "-":
-            value = -value
 
-        return group, rpy, value
+        # roll
+        sign = info[2]
+        r = int(info[3]) * 100 + int(info[4]) * 10 + int(info[5])
+        if sign == "-":
+            r = -r
+
+        # pitch
+        sign = info[7]
+        p = int(info[8]) * 100 + int(info[9]) * 10 + int(info[10])
+        if sign == "-":
+            p = -p
+
+        # yaw
+        sign = info[12]
+        y = int(info[13]) * 100 + int(info[14]) * 10 + int(info[15])
+        if sign == "-":
+            y = -y
+
+        return group, r, p, y
 
     except:
         print("¡A problem has appeard receiving information!")
@@ -158,11 +169,11 @@ def ReadData():
                 # buffer for such data
                 port_data = ""
 
-                incomming_info = coms.read()
-                print("USB received: ", incomming_info)
-                incomming_info = incomming_info.decode("ascii")
+                #incomming_info = coms.read()
+                #print("USB received: ", incomming_info)
+                incomming_info = coms.read().decode("ascii")
                 #incomming_info = coms.readline().decode('utf-8')
-                print("USB decoded: ", incomming_info)
+                #print("USB decoded: ", incomming_info)
 
                 if incomming_info == 'S':  # start sentinel
 
@@ -171,29 +182,32 @@ def ReadData():
                             # reads port data
                             incomming_info = coms.read()
                             incomming_info = incomming_info.decode("ascii")
+                            print("USB decoded: ", incomming_info)
                             # adds data to the buffer for post processing
                             port_data += incomming_info
                         except:
                             pass
+                    #print("Port data: ", port_data)
+                    #port_data = port_data[-5:-1]
 
-                    port_data = port_data[-5:-1]
+                    #dataString = str(port_data)
+                    #print("Information received: ", dataString)
 
-                    dataString = str(port_data)
-                    print("Information received: ", dataString)
-
-                    if dataString != "":
+                    if port_data != "":
                         try:
                             # process data
-                            group, rpy, value = manageInfo(dataString)
+                            group, r, p, y = manageInfo(port_data)
 
                             # updates the rpy value on their corresponding group
-                            if rpy == "R":
-                                roll[group] = value
-                            if rpy == "P":
-                                pitch[group] = value
-                            if rpy == "Y":
-                                yaw[group] = value
 
+                            roll[group] = r
+                            pitch[group] = p
+                            yaw[group] = y
+
+                            #print("Group: ", group)
+                            #print("Roll: ", r)
+                            #print("Pitch: ", p)
+                            #print("Yaw: ", y)
                             print("The information has been updated")
                         except:
                             print("Error, data corrupted")
