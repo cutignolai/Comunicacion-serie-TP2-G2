@@ -54,6 +54,21 @@ codes = {
     "5": 4
 }
 
+def InitPygame():
+    global display
+    pygame.init()
+    display = (1000, 600)
+    pygame.display.set_mode(display, DOUBLEBUF|OPENGL)
+    pygame.display.set_caption('TP2 Labo de micros G2')
+
+def InitGL():
+    #glClearColor((1.0/255*46),(1.0/255*45),(1.0/255*64),1)     #quita el  color del fondo
+    glEnable(GL_DEPTH_TEST)
+    glDepthFunc(GL_LEQUAL)
+    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST)
+
+    #gluPerspective(100, (display[0]/display[1]), 0.1, 50.0)    #estos dos desordenan todo
+    #glTranslatef(0.0,0.0, -5)
 
 def drawText(position, textString, color):
     font = pygame.font.Font(None, 50)
@@ -131,7 +146,9 @@ def ReadData():
                 port_data = ""
 
                 incomming_info = coms.read()
+                print("USB received: ", incomming_info)
                 incomming_info = incomming_info.decode("ascii")
+                print("USB decoded: ", incomming_info)
 
                 if incomming_info == 'S':  # start sentinel
 
@@ -169,6 +186,86 @@ def ReadData():
             except:
                 print("Decoding error")
 
+def DrawData():
+    drawText((-5, 3, -10), texts[0], (255, 255, 255))
+    smallDrawText((-11.5, 4, -18), "Roll: %d " % roll[0], (255, 255, 255))
+    smallDrawText((-11.5, 3, -18), "Pitch: %d " % pitch[0], (255, 255, 255))
+    smallDrawText((-11.5, 2, -18), "Yaw: %d " % yaw[0], (255, 255, 255))
+
+    drawText((-1, 3, -10), texts[1], (255, 255, 255))
+    smallDrawText((-4.5, 3.5, -18), "Roll: %d " % roll[1], (255, 255, 255))
+    smallDrawText((-4.5, 2.5, -18), "Pitch: %d " % pitch[1], (255, 255, 255))
+    smallDrawText((-4.5, 1.5, -18), "Yaw: %d " % yaw[1], (255, 255, 255))
+
+    drawText((3.5, 3, -10), texts[2], (255, 255, 255))
+    smallDrawText((3, 3.5, -18), "Roll: %d " % roll[2], (255, 255, 255))
+    smallDrawText((3, 2.5, -18), "Pitch: %d " % pitch[2], (255, 255, 255))
+    smallDrawText((3, 1.5, -18), "Yaw: %d " % yaw[2], (255, 255, 255))
+
+    drawText((-5, -1, -10), texts[3], (255, 255, 255))
+    smallDrawText((-11.5, -4, -18), "Roll: %d " % roll[3], (255, 255, 255))
+    smallDrawText((-11.5, -5, -18), "Pitch: %d " % pitch[3], (255, 255, 255))
+    smallDrawText((-11.5, -6, -18), "Yaw: %d " % yaw[3], (255, 255, 255))
+
+    drawText((-1, -1, -10), texts[4], (255, 255, 255))
+    smallDrawText((-4.5, -4, -18), "Roll: %d " % roll[4], (255, 255, 255))
+    smallDrawText((-4.5, -5, -18), "Pitch: %d " % pitch[4], (255, 255, 255))
+    smallDrawText((-4.5, -6, -18), "Yaw: %d " % yaw[4], (255, 255, 255))
+
+def DrawDataBig():
+    drawText((-18, 12, -10), texts[0], (255, 255, 255))
+    smallDrawText((-36, 15, -18), "Roll: %d " % roll[0], (255, 255, 255))
+    smallDrawText((-36, 12.5, -18), "Pitch: %d " % pitch[0], (255, 255, 255))
+    smallDrawText((-36, 10, -18), "Yaw: %d " % yaw[0], (255, 255, 255))
+
+    drawText((-4, 12, -10), texts[1], (255, 255, 255))
+    smallDrawText((-15, 15, -18), "Roll: %d " % roll[1], (255, 255, 255))
+    smallDrawText((-15, 12.5, -18), "Pitch: %d " % pitch[1], (255, 255, 255))
+    smallDrawText((-15, 10, -18), "Yaw: %d " % yaw[1], (255, 255, 255))
+
+    drawText((12, 12, -10), texts[2], (255, 255, 255))
+    smallDrawText((10, 15, -18), "Roll: %d " % roll[2], (255, 255, 255))
+    smallDrawText((10, 12.5, -18), "Pitch: %d " % pitch[2], (255, 255, 255))
+    smallDrawText((10, 10, -18), "Yaw: %d " % yaw[2], (255, 255, 255))
+
+    drawText((-18, -4, -10), texts[3], (255, 255, 255))
+    smallDrawText((-36, -10, -18), "Roll: %d " % roll[3], (255, 255, 255))
+    smallDrawText((-36, -12.5, -18), "Pitch: %d " % pitch[3], (255, 255, 255))
+    smallDrawText((-36, -15, -18), "Yaw: %d " % yaw[3], (255, 255, 255))
+
+    drawText((-4, -4, -10), texts[4], (255, 255, 255))
+    smallDrawText((-15, -10, -18), "Roll: %d " % roll[4], (255, 255, 255))
+    smallDrawText((-15, -12.5, -18), "Pitch: %d " % pitch[4], (255, 255, 255))
+    smallDrawText((-15, -15, -18), "Yaw: %d " % yaw[4], (255, 255, 255))
+
+def DrawBoard():
+    
+    glBegin(GL_QUADS)
+    x = 0
+    
+    for surface in surfaces:
+        
+        for vertex in surface:  
+            glColor3fv((colors[x]))          
+            glVertex3fv(vertices[vertex])
+        x += 1
+    glEnd()
+
+def DrawGL():
+
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+    glLoadIdentity() 
+    gluPerspective(90, (display[0]/display[1]), 0.1, 50.0)
+    glTranslatef(0.0,0.0, -5)   
+
+    glRotatef(pitch[0], 0, 0, 1)
+    glRotatef(roll[0], -1, 0, 0)
+
+    DrawData()
+    DrawBoard()
+    #pygame.display.flip()
+
+
 
 def main():
     global coms
@@ -178,12 +275,10 @@ def main():
     def on_closing():
         global run
         run = False
-        window.destroy()
 
-    pygame.init()
-    display = (800, 600)
-    pygame.display.set_caption('TP2 Labo de micros G2')
-    pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
+    InitPygame()
+    InitGL()
+   
 
     gluPerspective(45, (display[0] / display[1]), 0.1, 50.0)
 
@@ -229,12 +324,7 @@ def main():
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-        drawText((positions[0] - 1, 2, -10), texts[selected_board], (255, 255, 255))
-        # smallDrawText((positions[0]-1, 1, -10), "(Press enter)",(255,255,255))
-
-        drawText((positions[0] - 2, -6, -18), "Roll: %d " % roll[selected_board], (255, 0, 0))
-        drawText((positions[0] - 2, -4, -18), "Pitch: %d " % pitch[selected_board], (0, 0, 255))
-        drawText((positions[0] - 2, -2, -18), "Yaw: %d " % yaw[selected_board], (0, 255, 0))
+        DrawGL()
 
         if enterPressed:
             showRoll[selected_board] = 0
