@@ -44,11 +44,22 @@ void App_Run (void)
 {
     CAN_DataFrame frame;
 
-	/* Prepares the transmit frame for sending. */
 	frame.ID     = MY_BOARD_ID;
-	/* Writes a transmit message buffer to send a CAN Message. */
 
-	CAN_Status s = CAN_WriteTxMB( 0, &frame);
+	CAN_WriteTxMB( 0, &frame);
+
+	static volatile int i;
+
+	i = 800000;
+
+	while(i > 0)
+	{
+		--i;
+	}
+
+
+
+
     
 }
 

@@ -14,8 +14,6 @@
 
 #define TX_INACTIVE		0b1000
 
-static PORT_Type * const all_ports[] = PORT_BASE_PTRS;
-
 
 void CAN_Init( void )
 {
@@ -62,10 +60,11 @@ void CAN_Init( void )
      * TX y RX
      * Se configura los puertos PTB18 y PTB19
      */
-    PORT_Type* port_ptr = all_ports[PIN_CAN_TX/32]; 
 	uint32_t PCR = PORT_PCR_MUX(2) | PORT_PCR_PE_MASK | PORT_PCR_PS_MASK; // REVISAR COMO CONFIGURAR BIEN EL PCR
-	port_ptr->PCR[PIN_CAN_TX%32] = PCR;
-	port_ptr->PCR[PIN_CAN_RX%32] = PCR;
+	PORTB->PCR[18] = (uint32_t)0;
+	PORTB->PCR[18] = PCR;
+	PORTB->PCR[19] = (uint32_t)0;
+	PORTB->PCR[19] = PCR;
 
 
     /* 
@@ -123,14 +122,6 @@ void CAN_Init( void )
 	 */
 	CAN0->MCR |= CAN_MCR_IRMQ_MASK;
 
-	// Reset all message buffers
-	for(int i=0; i<CAN_CS_COUNT; i++)
-	{
-		CAN0->MB[i].CS = ( CAN0->MB[i].CS &= ~CAN_CS_CODE_MASK ) | CAN_CS_CODE(RX_INACTIVE);
-		CAN0->MB[i].ID = CAN_ID_STD(0);
-		CAN0->RXIMR[i] = 0xFFFFFFFF;
-	}
-
 	// Salgo del Freeze mode
 	CAN0->MCR &= ~CAN_MCR_HALT_MASK;
 	// Espero a que el modulo entre en Freeze mode 
@@ -175,17 +166,17 @@ void CAN_WriteTxMB(uint8_t index, CAN_DataFrame * frame)
 	CAN0->MB[index].ID = CAN_ID_STD(frame->ID);
 
 	/// Write the data bytes.
-	CAN0->MB[index].WORD0 = CAN_WORD0_DATA_BYTE_0(0x55) |
-							CAN_WORD0_DATA_BYTE_1(0x55) |
-							CAN_WORD0_DATA_BYTE_2(0x55) |
-							CAN_WORD0_DATA_BYTE_3(0x55);
-	CAN0->MB[index].WORD1 = CAN_WORD1_DATA_BYTE_4(0x55) |
-							CAN_WORD1_DATA_BYTE_5(0x55) |
-							CAN_WORD1_DATA_BYTE_6(0x55) |
-							CAN_WORD1_DATA_BYTE_7(0x55);
+	CAN0->MB[index].WORD0 = CAN_WORD0_DATA_BYTE_0(0x01) |
+							CAN_WORD0_DATA_BYTE_1(0x02) |
+							CAN_WORD0_DATA_BYTE_2(0x03) |
+							CAN_WORD0_DATA_BYTE_3(0x04);
+	CAN0->MB[index].WORD1 = CAN_WORD1_DATA_BYTE_4(0x05) |
+							CAN_WORD1_DATA_BYTE_5(0x06) |
+							CAN_WORD1_DATA_BYTE_6(0x07) |
+							CAN_WORD1_DATA_BYTE_7(0x08);
 
 	/// Write the DLC and CODE fields of the Control and Status word to activate the MB.
-	CAN0->MB[index].CS = CAN_CS_CODE(TX_DATA) | CAN_CS_DLC(frame->length) | CAN_CS_SRR(1) | CAN_CS_IDE(0);
+	CAN0->MB[index].CS = CAN_CS_RTR(0) | CAN_CS_CODE(0b1100) | CAN_CS_DLC(8) | CAN_CS_SRR(1) | CAN_CS_IDE(0);
 	
 }
 
@@ -223,7 +214,7 @@ bool CAN_ReadRxMB(uint8_t index, CAN_DataFrame * frame)
 	return true;
 	#endif
 
-
+	return true;
 }
 
 
