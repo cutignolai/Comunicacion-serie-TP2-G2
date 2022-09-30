@@ -10,18 +10,21 @@
 
 #include "board.h"
 #include "gpio.h"
+#include "can.h"
 
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
+#define BASE_ID 0b00100000000
+#define MY_BOARD_ID (BASE_ID + 3)
+
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
 
-static void delayLoop(uint32_t veces);
 
 
 /*******************************************************************************
@@ -33,14 +36,20 @@ static void delayLoop(uint32_t veces);
 /* Función que se llama 1 vez, al comienzo del programa */
 void App_Init (void)
 {
-    gpioMode(PIN_LED_BLUE, OUTPUT);
+    CAN_Init();
 }
 
 /* Función que se llama constantemente en un ciclo infinito */
 void App_Run (void)
 {
-    delayLoop(4000000UL);
-    gpioToggle(PIN_LED_BLUE);
+    CAN_DataFrame frame;
+
+	/* Prepares the transmit frame for sending. */
+	frame.ID     = MY_BOARD_ID;
+	/* Writes a transmit message buffer to send a CAN Message. */
+
+	CAN_Status s = CAN_WriteTxMB( 0, &frame);
+    
 }
 
 
@@ -50,10 +59,7 @@ void App_Run (void)
  *******************************************************************************
  ******************************************************************************/
 
-static void delayLoop(uint32_t veces)
-{
-    while (veces--);
-}
+
 
 
 /*******************************************************************************
