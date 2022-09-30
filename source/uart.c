@@ -75,7 +75,7 @@ unsigned char UART_Recieve_Data(uint8_t id);
  ***********************************************************************************************************/
 
 static UART_Type* const UART_ptrs[] = UART_BASE_PTRS;		// { UART0, UART1, UART2, UART3, UART4, UART5 } (Ver MK64F12.h)
-static PORT_Type * const addr_arrays[] = {PORTA, PORTC, PORTD, PORTC, PORTE};
+static PORT_Type * const addr_arrays[] = {PORTB, PORTC, PORTD, PORTC, PORTE};
 
 static const pin_t TX_PINS[UART_CANT_IDS] = {UART0_TX, UART1_TX, UART2_TX, UART3_TX, UART4_TX};
 static const pin_t RX_PINS[UART_CANT_IDS] = {UART0_RX, UART1_RX, UART2_RX, UART3_RX, UART4_RX};
