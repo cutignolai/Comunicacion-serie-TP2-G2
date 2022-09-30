@@ -73,14 +73,14 @@
 #define DIO_21			PORTNUM2PIN(PC, 4)
 #define DIO_22			PORTNUM2PIN(PD, 3)
 #define DIO_23			PORTNUM2PIN(PC, 17)
-#define DIO_24			PORTNUM2PIN(PE, 24)
+#define DIO_24			PORTNUM2PIN(PC, 15)
 
 //RX
 #define DIO_25			PORTNUM2PIN(PB, 16)    //PB16
 #define DIO_26			PORTNUM2PIN(PC, 3)
 #define DIO_27			PORTNUM2PIN(PD, 2)
 #define DIO_28			PORTNUM2PIN(PC, 16)
-#define DIO_29			PORTNUM2PIN(PE, 25)
+#define DIO_29			PORTNUM2PIN(PC, 14)
 
 /*******************************************************************************
  ******************************************************************************/
