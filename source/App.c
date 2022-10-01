@@ -53,20 +53,8 @@ void updateBoard(void);
 bool checkAngle (int16_t angle);
 
 //testing
-
-void genData(void);
-
 bool GetDataEvent(void);
 
-uint16_t getRoll(void);
-
-uint16_t getPitch(void);
-
-uint16_t getYaw(void);
-
-uint8_t getGroup (void);
-
-char* getChange(void);
 /*******************************************************************************
  *******************************************************************************
                         GLOBAL FUNCTION DEFINITIONS
@@ -93,10 +81,6 @@ void App_Init (void)
 void App_Run (void)
 {
     updateBoard();
-
-    //test
-    genData();
-    //it's lacking functions getGroup, getRoll/Pitch/Yaw which essentialy let it know if a change is made and where it's made
 }
 
 
@@ -113,22 +97,23 @@ void updateBoard(void){
         //codigo de testeo
 
         if (rand_event == 0){
-        	char message1 []= "S2R+030P-050Y+100E";
+        	char message1 []= "S2R+030E";
         	can_message_ptr = &message1[0];
         	rand_event++;
         }
         else if ((rand_event == 1) || (rand_event == 3)){
-			char message2 []= "S2R+045P-075Y+125E";
+			char message2 []= "S2R+045E";
 			can_message_ptr = &message2[0];
 			rand_event++;
+            if (rand_event == 4)
+        	    rand_event = 0;
 		}
         else if (rand_event == 2){
-			char message3 []= "S2R+060P-100Y+150E";
+			char message3 []= "S2R+060E";
 			can_message_ptr = &message3[0];
 			rand_event++;
 		}
-        if (rand_event == 4)
-        	rand_event = 0;
+        
 
 
 
@@ -143,53 +128,38 @@ void setBoard (void){
 	//get the current board being used
 	current_group = *(can_message_ptr + M_GROUP) - '0';
 
-    int16_t roll;
-    int16_t pitch;
-    int16_t yaw;
+    //gets the group board
+    current_board = getBoard(current_group);
+    
+    int16_t angle;
 
     int16_t c = *(can_message_ptr + M_ROLL + 2) - '0';
     int16_t d = *(can_message_ptr + M_ROLL + 3) - '0';
     int16_t u = *(can_message_ptr + M_ROLL + 4) - '0';
 
-    roll = c*100 + d*10 + u;
+    angle = c*100 + d*10 + u;
 
     if ((*(can_message_ptr + M_ROLL + 1)) == '-')
-        roll = -roll;
+        angle = -angle;
 
-    
-
-    c = *(can_message_ptr + M_PITCH + 2) - '0';
-    d = *(can_message_ptr + M_PITCH + 3) - '0';
-    u = *(can_message_ptr + M_PITCH + 4) - '0';
-
-    pitch = c*100 + d*10 + u;
-
-    if ((*(can_message_ptr + M_PITCH + 1)) == '-')
-        pitch = -pitch;
-   
-
-    c = *(can_message_ptr + M_YAW + 2) - '0';
-    d = *(can_message_ptr + M_YAW + 3) - '0';
-    u = *(can_message_ptr + M_YAW + 4) - '0';
-
-    yaw = c*100 + d*10 + u;
-
-    if ((*(can_message_ptr + M_YAW + 1)) == '-')
-        yaw = -yaw;
-    
-
-    if(checkAngle(roll)){
-        current_board.roll = roll;
+    if ((*(can_message_ptr + M_ROLL)) == 'R'){
+        if(checkAngle(angle)){
+            current_board.roll = angle;
+        }
     }
-    if(checkAngle(yaw)){
-        current_board.yaw = yaw;
+    else if ((*(can_message_ptr + M_ROLL)) == 'P'){
+        if(checkAngle(angle)){
+            current_board.pitch = angle;
+        }
     }
-    if(checkAngle(pitch)){
-        current_board.pitch = pitch;
+    else if ((*(can_message_ptr + M_ROLL)) == 'Y'){
+        if(checkAngle(angle)){
+            current_board.yaw = angle;
+        }
     }
-}
-
-int16_t getMessageNum (void){
+    else{
+        //do nothing
+    }
     
 }
 
@@ -204,57 +174,9 @@ bool checkAngle (int16_t angle){
 
 //testing functions
 
-char* getChange(void){
-    char message []= "S2R+030P-050Y+100E";
-    return &message[0];
-}
-
-void genData(void)
-{
-    uint32_t veces = 14000000UL;
-    while (veces--);
-    if (rand_event == 0){
-        periferic.roll += 30;
-        rand_event++;
-        position_event = true;
-    }
-    else if (rand_event == 1){
-        periferic.pitch -= 25;
-        rand_event++;
-        position_event = true;
-    }
-    else if (rand_event == 2){
-        periferic.yaw += 10;
-        rand_event++;
-        position_event = true;
-    }
-    else{
-        rand_event = 0;
-        position_event = false;
-    }
-}
-
 bool GetDataEvent(void){
-    return true;
+	return true;
 }
 
-
-
-uint16_t getRoll(void){
-    return periferic.roll;
-}
-
-uint16_t getPitch(void){
-    return periferic.pitch;
-}
-
-uint16_t getYaw(void){
-    return periferic.yaw;
-}
-
-uint8_t getGroup (void){    //for test purpose only will return our group number
-	uint8_t group = 2;
-    return group;           // this should be data saved the moment an interuption is generated and new data is available
-}
 /*******************************************************************************
  ******************************************************************************/
