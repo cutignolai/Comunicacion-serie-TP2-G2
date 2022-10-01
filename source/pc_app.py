@@ -13,6 +13,9 @@ from serial.tools import list_ports
 import serial
 import numpy as np
 import threading
+import vtkplotlib as vpl
+
+
 
 # JOYSTICK
 import pygame
@@ -396,6 +399,18 @@ def main():
 
     InitPygame()
     InitGL()
+
+    pitch[0] = -30
+    yaw[0] = -45
+    pitch[1] = -30
+    pitch[2] = -30
+    yaw[2] = 45
+    pitch[3] = 22
+    yaw[3] = -45
+    pitch[4] = 22
+    pitch[5] = 22
+    yaw[5] = 45
+
 
     gluPerspective(45, (display[0] / display[1]), 0.1, 50.0)
 
