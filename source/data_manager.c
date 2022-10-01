@@ -36,6 +36,7 @@ static char message[MESSAGE_LENGHT];
  *         FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
 
+// Adds an angle to its corresponding position in the message that will be sent
 void add_angle(uint8_t position, int16_t angle);
 
 
@@ -56,7 +57,7 @@ void dataManager_init(void){
     config.parity_type = 0;
     config.double_stop_bit = 0;
     config.use_fifo = 1;
-    config.bit_rate = 0;        //check later
+    config.bit_rate = 0;       
     uartInit (id, config);
 
 }
@@ -65,15 +66,14 @@ void sendData (board current_board, uint8_t group){
 
     //------------Message generation----------------
     // meesage: SS-Group number-Event-Sign-Value-ES
-    
-
 
     //Start sentinel
     message[0] = SS;
+
     //Group number
     message[M_GROUP] = group + '0';
-    //Roll, pitch or yaw
-   
+
+    //Roll, pitch and yaw
     message[M_ROLL] = 'R';
     add_angle(M_ROLL, current_board.roll);
     boards[group].roll = current_board.roll;
@@ -85,33 +85,14 @@ void sendData (board current_board, uint8_t group){
     message[M_YAW] = 'Y';
     add_angle(M_YAW, current_board.yaw);
     boards[group].yaw = current_board.yaw;
-    
+
     //End sentinel
     message[MESSAGE_LENGHT-1] = ES;
 
-
-    	//S2R+030E
     //------------Post management----------------
     
     uint8_t bytes;
     bytes = uartWriteMsg(id, &message[0], MESSAGE_LENGHT);
-    /*while (!uartIsTxMsgComplete(id)){
-        bytes = uartWriteMsg(id, &message[0], MESSAGE_SIZE);
-    }*/
-
-    /*printf("message count: %d \n", message_count);
-    message_count++;*/
-
-    /*uint8_t i;
-    char* ptr = &message[0];
-    printf("message:");
-    for (i=0; i<18;i++){
-    	printf("%c", *(ptr+i));
-    }
-    printf("\n");*/
-
-
-
 }
 
 board getBoard(uint8_t group){
@@ -140,8 +121,6 @@ void add_angle(uint8_t position, int16_t angle){
         message[position + 1] = '-';
         data = -angle;
     }
-    
-
 
     //the corresponding variation, at a max number of 999
     uint8_t c = (data/100);

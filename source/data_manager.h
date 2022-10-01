@@ -26,9 +26,6 @@
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
-
-
-
 typedef struct{
     int16_t roll;
     int16_t pitch;
@@ -53,9 +50,6 @@ void dataManager_init(void);
  * @return A pointer to an board type matrix
  */
 board getBoard(uint8_t group);
-
-
-
 
 /**
  * @brief sends the data that changed to the pc via UART protocol

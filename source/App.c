@@ -1,7 +1,7 @@
 /***************************************************************************//**
   @file     App.c
   @brief    Application functions
-  @author   Nicolás Magliola
+  @author   Pedro DL
  ******************************************************************************/
 
 /*******************************************************************************
@@ -113,9 +113,6 @@ void updateBoard(void){
 			can_message_ptr = &message3[0];
 			rand_event++;
 		}
-        
-
-
 
         //can_message_ptr = &message[0];          //get the pointer to the new message
         setBoard();                             //set the board ready to update         
