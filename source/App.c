@@ -178,27 +178,14 @@ void setBoard (void){
         yaw = -yaw;
     
 
-    if(checkAngle(roll))
-        if (checkAngle(pitch))
-            if(checkAngle(yaw)){
-                current_board.roll = roll;
-                current_board.pitch = pitch;
-                current_board.yaw = yaw;
-            }
-            else{                           //AGREGAR FLAG DE ERROR
-                current_board.roll = 0;
-                current_board.pitch = 0;
-                current_board.yaw = 0;
-            }
-        else{                           
-            current_board.roll = 0;
-            current_board.pitch = 0;
-            current_board.yaw = 0;
-        }
-    else{                           
-        current_board.roll = 0;
-        current_board.pitch = 0;
-        current_board.yaw = 0;
+    if(checkAngle(roll)){
+        current_board.roll = roll;
+    }
+    if(checkAngle(yaw)){
+        current_board.yaw = yaw;
+    }
+    if(checkAngle(pitch)){
+        current_board.pitch = pitch;
     }
 }
 
