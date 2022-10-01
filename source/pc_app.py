@@ -155,7 +155,7 @@ def ReadData():
                 print("Available ports: " + str(available_ports))
                 port = input("Select a port number: ")
 
-                coms = serial.Serial(port, baudrate=9600, timeout=1)
+                coms = serial.Serial('COM5', baudrate=9600, timeout=1)
 
                 print("Connected!")
                 connected = True
@@ -284,7 +284,6 @@ def DrawBoard():
     glEnd()
 
 def DrawGLL(index):
-
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
     gluPerspective(90, (display[0]/display[1]), 0.1, 50.0)
@@ -297,57 +296,241 @@ def DrawGLL(index):
     
     #pygame.display.flip()
 
-def DrawGL(index):
+def DrawGL0():          #DIBUJO UN BOARD
 
-    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+    #glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
     glLoadIdentity() 
     gluPerspective(90, (display[0]/display[1]), 0.1, 50.0)
-    glTranslatef(0.0,0.0, -5)   
+    glTranslatef(-5.5, 3, -5)               #MATRIZ DE TRANSLACION
 
-    glRotatef(pitch[index], 0, 0, 1)
-    glRotatef(roll[index], -1, 0, 0)
-    glRotatef(yaw[index], 0, 1, 0)
+    glRotatef(pitch[0], 0, 0, 1)
+    glRotatef(roll[0], -1, 0, 0)
+    glRotatef(yaw[0], 0, 1, 0)
 
-
-    #drawText((-4, 10, -10), texts[index], (255, 255, 255))
-    #smallDrawText((-25, -15, -18), "Roll: %d " % roll[index], (255, 255, 255))
-    #smallDrawText((-5, -15, -18), "Pitch: %d " % pitch[index], (255, 255, 255))
-    #smallDrawText((15, -15, -18), "Yaw: %d " % yaw[index], (255, 255, 255))
-
-    gnum = str(index)
-    NewDrawText("       Board "+ gnum)
+    gnum = str(0)
+    #NewDrawText("       Board "+ gnum)
     #NewDrawText("Roll: {}° Pitch: {}° Yaw: {}°".format(round(roll[index],1),round(pitch[index],1), round(yaw[index],1)))
     #DrawText("Roll: {}°               Pitch: {}°".format(round(myimu.Roll,1),round(myimu.Pitch,1)))
     DrawBoard()
     #pygame.display.flip()
 
-def EventManager(selected_board):
-    if selected_board == 10:
-        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
-        glLoadIdentity() 
-        gluPerspective(90, (display[0]/display[1]), 0.1, 50.0)
-        glTranslatef(0.0,0.0, -5)   
+def DrawGL1():          #DIBUJO UN BOARD
 
-        glRotatef(pitch[6], 0, 0, 1)
-        glRotatef(roll[6], -1, 0, 0)
-        glRotatef(yaw[6], 0, 1, 0)
-        DrawData()
-    else:
-        DrawGL(selected_board)
-    
-    
+    #glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+    glLoadIdentity()
+    gluPerspective(90, (display[0]/display[1]), 0.1, 50.0)
+    glTranslatef(0, 3, -5)               #MATRIZ DE TRANSLACION
+
+    glRotatef(pitch[1], 0, 0, 1)
+    glRotatef(roll[1], -1, 0, 0)
+    glRotatef(yaw[1], 0, 1, 0)
+
+
+
+
+    gnum = str(1)
+    #NewDrawText("       Board "+ gnum)
+    #NewDrawText("Roll: {}° Pitch: {}° Yaw: {}°".format(round(roll[index],1),round(pitch[index],1), round(yaw[index],1)))
+    #DrawText("Roll: {}°               Pitch: {}°".format(round(myimu.Roll,1),round(myimu.Pitch,1)))
+    DrawBoard()
+    #pygame.display.flip()
+
+def DrawGL2():          #DIBUJO UN BOARD
+
+    #glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+    glLoadIdentity()
+    gluPerspective(90, (display[0]/display[1]), 0.1, 50.0)
+    glTranslatef(5.5, 3, -5)               #MATRIZ DE TRANSLACION
+
+    glRotatef(pitch[2], 0, 0, 1)
+    glRotatef(roll[2], -1, 0, 0)
+    glRotatef(yaw[2], 0, 1, 0)
+
+
+
+
+    gnum = str(2)
+    #NewDrawText("       Board "+ gnum)
+    #NewDrawText("Roll: {}° Pitch: {}° Yaw: {}°".format(round(roll[index],1),round(pitch[index],1), round(yaw[index],1)))
+    #DrawText("Roll: {}°               Pitch: {}°".format(round(myimu.Roll,1),round(myimu.Pitch,1)))
+    DrawBoard()
+    #pygame.display.flip()
+
+
+def DrawGL3():          #DIBUJO UN BOARD
+
+    #glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+    glLoadIdentity()
+    gluPerspective(90, (display[0]/display[1]), 0.1, 50.0)
+    glTranslatef(-5.5, -2, -5)               #MATRIZ DE TRANSLACION
+
+    glRotatef(pitch[3], 0, 0, 1)
+    glRotatef(roll[3], -1, 0, 0)
+    glRotatef(yaw[3], 0, 1, 0)
+
+
+
+
+    gnum = str(3)
+    #NewDrawText("       Board "+ gnum)
+    #NewDrawText("Roll: {}° Pitch: {}° Yaw: {}°".format(round(roll[index],1),round(pitch[index],1), round(yaw[index],1)))
+    #DrawText("Roll: {}°               Pitch: {}°".format(round(myimu.Roll,1),round(myimu.Pitch,1)))
+    DrawBoard()
+    #pygame.display.flip()
+
+
+def DrawGL4():          #DIBUJO UN BOARD
+
+    #glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+    glLoadIdentity()
+    gluPerspective(90, (display[0]/display[1]), 0.1, 50.0)
+    glTranslatef(0, -2, -5)               #MATRIZ DE TRANSLACION
+
+    glRotatef(pitch[4], 0, 0, 1)
+    glRotatef(roll[4], -1, 0, 0)
+    glRotatef(yaw[4], 0, 1, 0)
+
+
+
+
+    gnum = str(4)
+    #NewDrawText("       Board "+ gnum)
+    #NewDrawText("Roll: {}° Pitch: {}° Yaw: {}°".format(round(roll[index],1),round(pitch[index],1), round(yaw[index],1)))
+    #DrawText("Roll: {}°               Pitch: {}°".format(round(myimu.Roll,1),round(myimu.Pitch,1)))
+    DrawBoard()
+    #pygame.display.flip()
+
+
+def DrawGL5():          #DIBUJO UN BOARD
+
+    #glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
+    glLoadIdentity()
+    gluPerspective(90, (display[0]/display[1]), 0.1, 50.0)
+    glTranslatef(5.5, -2, -5)               #MATRIZ DE TRANSLACION
+
+    glRotatef(pitch[5], 0, 0, 1)
+    glRotatef(roll[5], -1, 0, 0)
+    glRotatef(yaw[5], 0, 1, 0)
+
+
+
+
+    gnum = str(5)
+    #NewDrawText("       Board "+ gnum)
+    #NewDrawText("Roll: {}° Pitch: {}° Yaw: {}°".format(round(roll[index],1),round(pitch[index],1), round(yaw[index],1)))
+    #DrawText("Roll: {}°               Pitch: {}°".format(round(myimu.Roll,1),round(myimu.Pitch,1)))
+    DrawBoard()
+    #pygame.display.flip()
+
+
+
+
+
+
+
+
+def BoardText0():           #PONGO TEXTO A UN TABLERO
+
+    glLoadIdentity()
+    gluPerspective(90, (display[0] / display[1]), 0.1, 50.0)
+    glTranslatef(-5.5, 3, -5)  # MATRIZ DE TRANSLACION
+
+    drawText((-18, 0, -10), texts[0], (255, 255, 255))
+    smallDrawText((-15, 3, -18), "Roll: %d " % roll[0], (255, 255, 255))
+    smallDrawText((-15, 1, -18), "Pitch: %d " % pitch[0], (255, 255, 255))
+    smallDrawText((-15, -1, -18), "Yaw: %d " % yaw[0], (255, 255, 255))
+
+def BoardText1():           #PONGO TEXTO A UN TABLERO
+
+    glLoadIdentity()
+    gluPerspective(90, (display[0] / display[1]), 0.1, 50.0)
+    glTranslatef(-5.5, 3, -5)  # MATRIZ DE TRANSLACION
+
+    drawText((0, 0, -10), texts[1], (255, 255, 255))
+    smallDrawText((10, 3, -18), "Roll: %d " % roll[1], (255, 255, 255))
+    smallDrawText((10, 1, -18), "Pitch: %d " % pitch[1], (255, 255, 255))
+    smallDrawText((10, -1, -18), "Yaw: %d " % yaw[1], (255, 255, 255))
+
+def BoardText2():           #PONGO TEXTO A UN TABLERO
+
+    glLoadIdentity()
+    gluPerspective(90, (display[0] / display[1]), 0.1, 50.0)
+    glTranslatef(-5.5, 3, -5)  # MATRIZ DE TRANSLACION
+
+    drawText((17, 0, -10), texts[2], (255, 255, 255))
+    smallDrawText((35, 3, -18), "Roll: %d " % roll[2], (255, 255, 255))
+    smallDrawText((35, 1, -18), "Pitch: %d " % pitch[2], (255, 255, 255))
+    smallDrawText((35, -1, -18), "Yaw: %d " % yaw[2], (255, 255, 255))
+
+def BoardText3():           #PONGO TEXTO A UN TABLERO
+
+    glLoadIdentity()
+    gluPerspective(90, (display[0] / display[1]), 0.1, 50.0)
+    glTranslatef(-5.5, 3, -5)  # MATRIZ DE TRANSLACION
+
+    drawText((-18, -15, -10), texts[3], (255, 255, 255))
+    smallDrawText((-15, -20, -18), "Roll: %d " % roll[3], (255, 255, 255))
+    smallDrawText((-15, -22, -18), "Pitch: %d " % pitch[3], (255, 255, 255))
+    smallDrawText((-15, -24, -18), "Yaw: %d " % yaw[3], (255, 255, 255))
+
+def BoardText4():           #PONGO TEXTO A UN TABLERO
+
+    glLoadIdentity()
+    gluPerspective(90, (display[0] / display[1]), 0.1, 50.0)
+    glTranslatef(-5.5, 3, -5)  # MATRIZ DE TRANSLACION
+
+    drawText((0, -15, -10), texts[4], (255, 255, 255))
+    smallDrawText((10, -20, -18), "Roll: %d " % roll[4], (255, 255, 255))
+    smallDrawText((10, -22, -18), "Pitch: %d " % pitch[4], (255, 255, 255))
+    smallDrawText((10, -24, -18), "Yaw: %d " % yaw[4], (255, 255, 255))
+
+
+def BoardText5():           #PONGO TEXTO A UN TABLERO
+
+    glLoadIdentity()
+    gluPerspective(90, (display[0] / display[1]), 0.1, 50.0)
+    glTranslatef(-5.5, 3, -5)  # MATRIZ DE TRANSLACION
+
+    drawText((17, -15, -10), texts[5], (255, 255, 255))
+    smallDrawText((35, -20, -18), "Roll: %d " % roll[5], (255, 255, 255))
+    smallDrawText((35, -22, -18), "Pitch: %d " % pitch[5], (255, 255, 255))
+    smallDrawText((35, -24, -18), "Yaw: %d " % yaw[5], (255, 255, 255))
+
+def EventManager0():  # DIBUJA MENU O UN TABLERO
+    DrawGL0()
+    BoardText0()
+
+def EventManager1():           #DIBUJA MENU O UN TABLERO
+    DrawGL1()
+    BoardText1()
+
+def EventManager2():           #DIBUJA MENU O UN TABLERO
+    DrawGL2()
+    BoardText2()
+
+def EventManager3():           #DIBUJA MENU O UN TABLERO
+    DrawGL3()
+    BoardText3()
+
+def EventManager4():           #DIBUJA MENU O UN TABLERO
+    DrawGL4()
+    BoardText4()
+
+def EventManager5():           #DIBUJA MENU O UN TABLERO
+    DrawGL5()
+    BoardText5()
 
 def main():
     global coms
     global showRoll, showPitch, showYaw, targetShowCabeceo, targetShowOrientacion, targetShowRolido
-    selected_board = 10
+    #selected_board = 1
     def on_closing():
         global run
         run = False
 
     InitPygame()
     InitGL()
-    DrawData()
+    #DrawData()
 
     gluPerspective(45, (display[0] / display[1]), 0.1, 50.0)
 
@@ -368,6 +551,7 @@ def main():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
+            """
             if event.type == pygame.KEYDOWN:
                 #navigating through 3D boards
                 if event.key == pygame.K_LEFT:
@@ -432,21 +616,28 @@ def main():
                         enterPressed = True
                 if event.type == pygame.KEYUP:
                     keys[event.key] = 0
-
+"""
         # print(status)
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-        EventManager(selected_board)
+        EventManager0()
+        EventManager1()
+        EventManager2()
+        EventManager3()
+        EventManager4()
+        EventManager5()
 
         if enterPressed:
-            showRoll[selected_board] = 0
-            showPitch[selected_board] = 0
-            showYaw[selected_board] = 0
+            i = 0
+            for i in range(6):
+                showRoll[i] = 0
+                showPitch[i] = 0
+                showYaw[i] = 0
 
-            targetShowRolido[selected_board] = roll[selected_board]
-            targetShowCabeceo[selected_board] = pitch[selected_board]
-            targetShowOrientacion[selected_board] = yaw[selected_board]
+                targetShowRolido[i] = roll[i]
+                targetShowCabeceo[i] = pitch[i]
+                targetShowOrientacion[i] = yaw[i]
 
         pygame.display.flip()
         #pygame.time.wait(10)
