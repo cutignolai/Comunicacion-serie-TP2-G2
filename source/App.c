@@ -8,9 +8,11 @@
  * INCLUDE HEADER FILES
  ******************************************************************************/
 
+#include <stdio.h>
 #include "board.h"
 #include "gpio.h"
 #include "can.h"
+#include "ComunicacionCAN.h"
 
 
 /*******************************************************************************
@@ -18,7 +20,7 @@
  ******************************************************************************/
 
 #define BASE_ID 0b00100000000
-#define MY_BOARD_ID (BASE_ID + 3)
+#define MY_BOARD_ID (BASE_ID + 2)
 
 
 /*******************************************************************************
@@ -36,17 +38,35 @@
 /* Función que se llama 1 vez, al comienzo del programa */
 void App_Init (void)
 {
-    CAN_Init();
+	canComunicationInit(0);
 }
 
 /* Función que se llama constantemente en un ciclo infinito */
 void App_Run (void)
 {
+	/*
     CAN_DataFrame frame;
 
-	frame.ID     = MY_BOARD_ID;
+    CAN_DataFrame *frame_pointer = &frame;
 
-	CAN_WriteTxMB( 0, &frame);
+	frame.ID = MY_BOARD_ID;
+
+	frame_pointer->dataByte0 = 0x00;
+	frame_pointer->dataByte1 = 0x03;
+	frame_pointer->dataByte2 = 0x03;
+	frame_pointer->dataByte3 = 0x03;
+	frame_pointer->dataByte4 = 0x03;
+	frame_pointer->dataByte5 = 0x03;
+	frame_pointer->dataByte6 = 0x03;
+	frame_pointer->dataByte7 = 0x03;
+
+	CAN_WriteTxMB(0, &frame);
+
+	*/
+
+	char message[] = "AAAAAAAA";
+
+	sendCanMessage(message, 0);
 
 	static volatile int i;
 
@@ -57,8 +77,22 @@ void App_Run (void)
 		--i;
 	}
 
+	char messageAns[] = "XXXXXXXX";
+
+	int boardStatus = getBoardStatus(0);
+	if (boardStatus == 1)
+	{
+		receiveCanMessage(messageAns, 0);
+	}
 
 
+
+	i = 800000;
+
+	while(i > 0)
+	{
+		--i;
+	}
 
     
 }

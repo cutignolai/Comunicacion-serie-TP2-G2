@@ -13,6 +13,10 @@
 #define RX_MB_INDEX 	1
 
 #define TX_INACTIVE		0b1000
+#define RX_EMPTY    	0b0100
+#define TX_DATA			0b1100
+#define RX_INACTIVE 	0b0000
+
 
 
 void CAN_Init( void )
@@ -131,7 +135,6 @@ void CAN_Init( void )
 
 void  CAN_ConfigureRxMB( uint8_t index, uint32_t ID)
 {
-	#if 0
 	/*
 	 *
 	 *					49.4.3 Receive process
@@ -148,7 +151,7 @@ void  CAN_ConfigureRxMB( uint8_t index, uint32_t ID)
 
 	// 3. Write the EMPTY code (0b0100) to the CODE field of the Control and Status word to activate the Mailbox.
 	CAN0->MB[index].CS = CAN_CS_CODE(RX_EMPTY) | CAN_CS_IDE(0);
-	#endif
+
 }
 
 void CAN_WriteTxMB(uint8_t index, CAN_DataFrame * frame)
@@ -162,27 +165,26 @@ void CAN_WriteTxMB(uint8_t index, CAN_DataFrame * frame)
 	// Write INACTIVE code (0b1000) to the CODE field to inactivate the MB but then the pending frame may be transmitted without notification.
 	CAN0->MB[index].CS = CAN_CS_CODE(TX_INACTIVE);
 
-	/// Write the ID word.
+	// Write the ID word.
 	CAN0->MB[index].ID = CAN_ID_STD(frame->ID);
 
-	/// Write the data bytes.
-	CAN0->MB[index].WORD0 = CAN_WORD0_DATA_BYTE_0(0x01) |
-							CAN_WORD0_DATA_BYTE_1(0x02) |
-							CAN_WORD0_DATA_BYTE_2(0x03) |
-							CAN_WORD0_DATA_BYTE_3(0x04);
-	CAN0->MB[index].WORD1 = CAN_WORD1_DATA_BYTE_4(0x05) |
-							CAN_WORD1_DATA_BYTE_5(0x06) |
-							CAN_WORD1_DATA_BYTE_6(0x07) |
-							CAN_WORD1_DATA_BYTE_7(0x08);
+	// Write the data bytes.
+	CAN0->MB[index].WORD0 = CAN_WORD0_DATA_BYTE_0(frame->dataByte0) |
+							CAN_WORD0_DATA_BYTE_1(frame->dataByte1) |
+							CAN_WORD0_DATA_BYTE_2(frame->dataByte2) |
+							CAN_WORD0_DATA_BYTE_3(frame->dataByte3);
+	CAN0->MB[index].WORD1 = CAN_WORD1_DATA_BYTE_4(frame->dataByte4) |
+							CAN_WORD1_DATA_BYTE_5(frame->dataByte5) |
+							CAN_WORD1_DATA_BYTE_6(frame->dataByte6) |
+							CAN_WORD1_DATA_BYTE_7(frame->dataByte7);
 
-	/// Write the DLC and CODE fields of the Control and Status word to activate the MB.
-	CAN0->MB[index].CS = CAN_CS_RTR(0) | CAN_CS_CODE(0b1100) | CAN_CS_DLC(8) | CAN_CS_SRR(1) | CAN_CS_IDE(0);
+	// Write the DLC and CODE fields of the Control and Status word to activate the MB.
+	CAN0->MB[index].CS = CAN_CS_RTR(0) | CAN_CS_CODE(TX_DATA) | CAN_CS_DLC(8) | CAN_CS_SRR(1) | CAN_CS_IDE(0);
 	
 }
 
 bool CAN_ReadRxMB(uint8_t index, CAN_DataFrame * frame)
 {
-	#if 0
 	/*
 	* -----------------------------------------
 	*			49.4.3 Receive process
@@ -210,9 +212,6 @@ bool CAN_ReadRxMB(uint8_t index, CAN_DataFrame * frame)
 
 	// Read the Free Running Timer. It is optional but recommended to unlock Mailbox as soon as possible and make it available for reception.
 	CAN0->TIMER;
-
-	return true;
-	#endif
 
 	return true;
 }
