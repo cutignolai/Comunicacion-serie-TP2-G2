@@ -25,8 +25,9 @@
 /*******************************************************************************
  * STATIC VARIABLES AND CONST VARIABLES WITH FILE LEVEL SCOPE
  ******************************************************************************/
-
+//board group matrix
 static board boards[GROUPS];
+//UART info
 static uint8_t id;
 static uart_cfg_t config;
 static char message[MESSAGE_LENGHT];
@@ -57,7 +58,8 @@ void dataManager_init(void){
     config.parity_type = 0;
     config.double_stop_bit = 0;
     config.use_fifo = 1;
-    config.bit_rate = 0;       
+    config.bit_rate = 0;   
+
     uartInit (id, config);
 
 }
@@ -96,7 +98,7 @@ void sendData (board current_board, uint8_t group){
 }
 
 board getBoard(uint8_t group){
-    return boards[group-1];
+    return boards[group];
 }
 
 /*******************************************************************************
