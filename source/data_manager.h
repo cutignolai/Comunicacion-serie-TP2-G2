@@ -63,7 +63,7 @@ void sendData (board current_board, uint8_t group);
  * @param event a char with either 'R', 'P' or 'Y' to signal which event it is
  * @param angle variaton on said orientation
  */
-char* createCANmessage (char event, int16_t angle);
+void createCANmessage (char event, int angle, char* newmessage, char board_id);
 
 
 /*******************************************************************************

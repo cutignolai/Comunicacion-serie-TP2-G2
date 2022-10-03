@@ -67,11 +67,11 @@ void App_Init (void)
 	// INICIALIZA CAN
 	canComunicationInit();
 	canMBInit(OUR_BOARD_NUMBER_CAN);
-	// canMBInit(1);
-	// canMBInit(2);
-	// canMBInit(3);
-	// canMBInit(4);
-	// canMBInit(5);
+	canMBInit(1);
+	canMBInit(2);
+	canMBInit(3);
+	canMBInit(4);
+	canMBInit(5);
 
 	// INICIALIZA ACELEROMETRO
 	orientation_Init();
@@ -98,23 +98,29 @@ void App_Run (void)
     if (orientation_Compute()){		// Calcula y ve si hubo un cambio
 
 		if (getRollState()){
-            char* ptr = createCANmessage ('R', getRoll()); // Creo un mensaje del tipo: S2R+150E
+			char can_msg[8];
+
 			for (i=0; i<6; i++){
-				sendCanMessage(ptr, i);	// Le mando a todos los CAN
+				createCANmessage ('R', getRoll(), can_msg, i); // Creo un mensaje del tipo: S2R+150E
+				sendCanMessage(can_msg, i);	// Le mando a todos los CAN
 			}
 		}
 
 		else if (getPitchState()){
-			char* ptr = createCANmessage ('P', getPitch()); // Creo un mensaje del tipo: S2P+150E
+			char can_msg[8];
+
 			for (i=0; i<6; i++){
-				sendCanMessage(ptr, i);	// Le mando a todos los CAN
+				createCANmessage ('P', getPitch(), can_msg, i); // Creo un mensaje del tipo: S2P+150E
+				sendCanMessage(can_msg, i);	// Le mando a todos los CAN
 			}
 		}
 
 		else if (getYawState()){
-			char* ptr = createCANmessage ('Y', getYaw()); // Creo un mensaje del tipo: S5Y-030E
+			char can_msg[8];
+
 			for (i=0; i<6; i++){
-				sendCanMessage(ptr, i);	// Le mando a todos los CAN
+				createCANmessage ('Y', getYaw(), can_msg, i); // Creo un mensaje del tipo: S5Y-030E
+				sendCanMessage(can_msg, i);	// Le mando a todos los CAN
 			}
 		}
         
@@ -138,7 +144,7 @@ void updateBoard(void){
 
 			// ANALIZO SI HUBO ERROR
 			uint8_t j;
-			for(j = 0; j<8; j++){
+			for(j = 0; j<6; j++){
 				if(messageAux[j] != 'X')
 				{
 					break;

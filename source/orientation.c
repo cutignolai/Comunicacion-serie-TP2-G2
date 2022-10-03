@@ -25,10 +25,12 @@
 #define BYTE_SIZE	8
 #define ACC_SHIFT	2
 
-#define I2C_ID				I2C0_ID
-#define FXOS8700CQ_ADD		0x1D
-#define FXOS8700CQ_ID		0xC7
-#define TIMER_MS			50
+#define I2C_ID					I2C0_ID
+#define FXOS8700CQ_ADD			0x1D
+#define FXOS8700CQ_ID			0xC7
+#define TIMER_MS				50
+#define ACC_SENSITIVITY(x)	 		(1.0/(float)(4096>>x))
+//#define ACC_SENSITIVITY_SELECT(x)			
 
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
@@ -89,9 +91,9 @@ typedef struct {
 } raw_axis_t;
 
 typedef struct {
-	int16_t	roll;
-	int16_t	pitch;
-	int16_t	yaw;
+	int		roll;
+	int		pitch;
+	int 	yaw;
 } orientation_t;
 
 typedef struct {
@@ -133,6 +135,7 @@ static uint8_t axis_reg = FXOS8700CQ_STATUS;
 // uint8_t magnet_reg = FXOS8700CQ_OUT_X_MSB;
 static orientation_config_t orientation_config;
 static orientation_config_t reg_test;
+static uint8_t sensitivity;
 
 /*******************************************************************************
  *******************************************************************************
@@ -150,6 +153,7 @@ bool orientation_Init(){
 
 		timerInit();
 
+		sensitivity = 4;
 		orientation_timer = timerGetId();
 		timerCreate(orientation_timer, TIMER_MS2TICKS(TIMER_MS), TIM_MODE_PERIODIC, &orientation_ISR);
 
@@ -278,14 +282,24 @@ void calibrateOrientation(offset_t* orientation_offset){
 
 bool orientation_Compute(){
 
-	uint16_t roll = atan2(axis_data.y_acc_axis, axis_data.z_acc_axis);
-	if (roll - angle_data.roll > ANGLE_THRESHOLD){
+	float acc_x = axis_data.x_acc_axis * ACC_SENSITIVITY(sensitivity);
+	float acc_y = axis_data.y_acc_axis * ACC_SENSITIVITY(sensitivity);
+	float acc_z = axis_data.z_acc_axis * ACC_SENSITIVITY(sensitivity);
+
+	float norm2 = sqrt(acc_x * acc_x + acc_y * acc_y + acc_z * acc_z);
+	acc_x = acc_x / norm2;
+	acc_y = acc_y / norm2;
+	acc_z = acc_z / norm2;
+
+	int roll=(int)((180/M_PI)*atan2(acc_y,sqrt(acc_x * acc_x + acc_z * acc_z)));
+	int pitch = (int)((180/M_PI) * atan2(acc_x, sqrt(acc_y*acc_y + acc_z*acc_z)));
+
+	if ( abs(roll - angle_data.roll) > ANGLE_THRESHOLD){
 		angle_data.roll = roll;
 		angle_state.roll_state = true;
 	}
 
-	uint16_t pitch = atan2(-axis_data.x_acc_axis, axis_data.y_acc_axis*sin(angle_data.roll) + axis_data.z_acc_axis*cos(angle_data.roll));
-	if (pitch - angle_data.pitch > ANGLE_THRESHOLD){
+	if ( abs(pitch - angle_data.pitch) > ANGLE_THRESHOLD){
 		angle_data.pitch = pitch;
 		angle_state.pitch_state = true;
 	}
@@ -309,17 +323,17 @@ bool getYawState(){
 	return angle_state.yaw_state;
 }
 
-uint16_t getRoll(){
+int getRoll(){
 	angle_state.roll_state = false;
 	return angle_data.roll;
 }
 
-uint16_t getPitch(){
+int getPitch(){
 	angle_state.pitch_state = false;
 	return angle_data.pitch;
 }
 
-uint16_t getYaw(){
+int getYaw(){
 	angle_state.yaw_state = false;
 	return angle_data.yaw;
 }
@@ -414,4 +428,3 @@ void print_regs(){
 }
 
 /******************************************************************************/
-

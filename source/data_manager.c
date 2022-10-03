@@ -101,20 +101,20 @@ board getBoard(uint8_t group){
     return boards[group];
 }
 
-char* createCANmessage (char event, int16_t angle){
-    char newmessage [7];    
+void createCANmessage (char event, int angle, char* newmessage, char board_id){
     uint16_t data;
 
     newmessage[0] = SS;
-    newmessage[1] = event; //roll, pitch or yaw
+    newmessage[1] = 48 + board_id;
+    newmessage[2] = event; //roll, pitch or yaw
 
     if (angle>0){
-        newmessage[2] = '+';
+        newmessage[3] = '+';
         data = angle;
     }
         
     else {
-        newmessage[2] = '-';
+        newmessage[3] = '-';
         data = -angle;
     }
 
@@ -128,13 +128,11 @@ char* createCANmessage (char event, int16_t angle){
     c = c + '0';
     uint8_t u = (data%10)+'0';
 
-    newmessage[3] = c;
-    newmessage[4] = d;
-    newmessage[5] = u;
+    newmessage[4] = c;
+    newmessage[5] = d;
+    newmessage[6] = u;
 
-    newmessage[6] = ES;
-
-    return &newmessage[0];
+    newmessage[7] = ES;
 
 }
 /*******************************************************************************
