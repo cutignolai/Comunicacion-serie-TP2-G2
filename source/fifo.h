@@ -23,8 +23,8 @@
 // #define FIFO_VERBOSE				// Uncomment for logs
 #define FIFO_DEVELOPMENT_MODE
 
-#define MAX_FIFO_SIZE   256         // Maximum FIFO buffer size in bytes
-#define FIFO_MAX_N      16          // Maximum amount of FIFO queues
+#define MAX_FIFO_SIZE   250         // Maximum FIFO buffer size in bytes
+#define FIFO_MAX_N      5          // Maximum amount of FIFO queues
 
 #define FIFO_INVALID_ID     255     // ID returned when FIFO Array is full
 

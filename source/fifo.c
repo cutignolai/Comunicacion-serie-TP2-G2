@@ -134,7 +134,7 @@ size_t FIFO_ReadAll(fifo_id_t id, fifo_value_t* data_ptr){
 
 bool FIFO_PushToBuffer(fifo_id_t id, fifo_value_t data){
 
-    if (!FIFO_Array[id].is_buffer_full){                        // If buffer is not full
+	if (!FIFO_Array[id].is_buffer_full){                        // If buffer is not full
 
         *((fifo_value_t*)(&FIFO_Array[id].queue[0] + FIFO_Array[id].head)) = data;   // Write data
 #ifdef FIFO_VERBOSE
@@ -153,6 +153,10 @@ bool FIFO_PushToBuffer(fifo_id_t id, fifo_value_t data){
             printf("fifo verbose - FIFO %u buffer full\n", id);
 #endif
         }
+    }
+    else
+    {
+    	int i = 0;
     }
 
     return FIFO_Array[id].is_buffer_full;       // Return buffer state

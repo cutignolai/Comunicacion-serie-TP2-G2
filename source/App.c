@@ -69,9 +69,7 @@ void App_Init (void)
 	canMBInit(OUR_BOARD_NUMBER_CAN);
 	canMBInit(1);
 	canMBInit(2);
-	canMBInit(3);
-	canMBInit(4);
-	canMBInit(5);
+
 
 	// INICIALIZA ACELEROMETRO
 	orientation_Init();
@@ -100,7 +98,7 @@ void App_Run (void)
 		if (getRollState()){
 			char can_msg[8];
 
-			for (i=0; i<6; i++){
+			for (i=0; i<3; i++){
 				createCANmessage ('R', getRoll(), can_msg, i); // Creo un mensaje del tipo: S2R+150E
 				sendCanMessage(can_msg, i);	// Le mando a todos los CAN
 			}
@@ -109,7 +107,7 @@ void App_Run (void)
 		else if (getPitchState()){
 			char can_msg[8];
 
-			for (i=0; i<6; i++){
+			for (i=0; i<3; i++){
 				createCANmessage ('P', getPitch(), can_msg, i); // Creo un mensaje del tipo: S2P+150E
 				sendCanMessage(can_msg, i);	// Le mando a todos los CAN
 			}
@@ -118,13 +116,15 @@ void App_Run (void)
 		else if (getYawState()){
 			char can_msg[8];
 
-			for (i=0; i<6; i++){
+			for (i=0; i<3; i++){
 				createCANmessage ('Y', getYaw(), can_msg, i); // Creo un mensaje del tipo: S5Y-030E
 				sendCanMessage(can_msg, i);	// Le mando a todos los CAN
 			}
 		}
         
     }
+
+
 
     updateBoard();      //check if there's info comming from other boards and update it
 }
@@ -137,14 +137,15 @@ void App_Run (void)
  ******************************************************************************/
 void updateBoard(void){
     uint8_t i;
-    for (i=0; i<6; i++){		// FIXME: TENER CUIDADO EL MAXIMO DEL FOR
-        if(getBoardStatus(i) == 1){           //get the pointer to the new message via CAN. It should be done for each can
+    for (i=0; i<3; i++){		// FIXME: TENER CUIDADO EL MAXIMO DEL FOR
+        if(getBoardStatus(i) == 1)
+        {           //get the pointer to the new message via CAN. It should be done for each can
 			char messageAux[] = "XXXXXXXX";
 			receiveCanMessage(messageAux, i);
 
 			// ANALIZO SI HUBO ERROR
 			uint8_t j;
-			for(j = 0; j<6; j++){
+			for(j = 0; j<8; j++){
 				if(messageAux[j] != 'X')
 				{
 					break;
@@ -158,7 +159,8 @@ void updateBoard(void){
 				can_message_ptr = &messageAux[0];   
             	setBoard(can_message_ptr);                  //set the board ready to update
                 if (message_error == false){
-                    sendData(current_board, current_group);     //send board to pc 
+                	sendData(current_board, current_group);     //send board to pc
+
                 }
                 else{
                     message_error = false;                    //a problem ocurred, message wasn't send

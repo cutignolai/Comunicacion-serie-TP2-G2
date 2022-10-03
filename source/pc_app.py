@@ -70,6 +70,7 @@ def smallDrawText(position, textString, color):
 # decodes the information received according to a transmition code made
 def manageInfo(info):
     try:
+        print(info)
         group = int(info[0])
 
         # roll
@@ -119,7 +120,7 @@ def ReadData():
                 print("Available ports: " + str(available_ports))
                 port = input("Select a port number: ")
 
-                coms = serial.Serial('COM5', baudrate=9600, timeout=1)
+                coms = serial.Serial('COM3', baudrate=9600, timeout=1)
 
                 print("Connected!")
                 connected = True

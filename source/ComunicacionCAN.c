@@ -72,7 +72,7 @@ bool receiveCanMessage(char* message, int board)
     message[6] = frame_pointerAnsw->dataByte6;
     message[7] = frame_pointerAnsw->dataByte7;
 
-    mbStatus[board] = MESSAGE_RECIVE;
+    mbStatus[board] = NOTHING_YET;
 
     return status;
 }
