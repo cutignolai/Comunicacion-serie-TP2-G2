@@ -10,6 +10,7 @@
 
 #include "data_manager.h"
 #include "ComunicacionCAN.h"
+#include "orientation.h"
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -18,7 +19,7 @@
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
-
+#define OUR_BOARD_NUMBER_CAN 0
 
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
@@ -60,16 +61,22 @@ bool checkAngle (int16_t angle);
 /* Función que se llama 1 vez, al comienzo del programa */
 void App_Init (void)
 {
-      
+    // INICIALIZA UART  
     dataManager_init();
 	
+	// INICIALIZA CAN
 	canComunicationInit();
-	canMBInit(0);
+	canMBInit(OUR_BOARD_NUMBER_CAN);
 	// canMBInit(1);
 	// canMBInit(2);
 	// canMBInit(3);
 	// canMBInit(4);
 	// canMBInit(5);
+
+	// INICIALIZA ACELEROMETRO
+	orientation_Init();
+
+    message_error = false;
 
     // senCANmessage, receive message,
 }
@@ -77,9 +84,41 @@ void App_Init (void)
 /* Función que se llama constantemente en un ciclo infinito */
 void App_Run (void)
 {
-    //add function to check our own board
+    static bool first = true;
 
-    //if necesary, send info to other boards via can
+	if (first){
+		first = false;
+		orientation_Config();
+        while (!isOrientationReady());
+        orientation_Start();
+	}
+	
+	uint8_t i;
+
+    if (orientation_Compute()){		// Calcula y ve si hubo un cambio
+
+		if (getRollState()){
+            char* ptr = createCANmessage ('R', getRoll()); // Creo un mensaje del tipo: S2R+150E
+			for (i=0; i<6; i++){
+				sendCanMessage(ptr, i);	// Le mando a todos los CAN
+			}
+		}
+
+		else if (getPitchState()){
+			char* ptr = createCANmessage ('P', getPitch()); // Creo un mensaje del tipo: S2P+150E
+			for (i=0; i<6; i++){
+				sendCanMessage(ptr, i);	// Le mando a todos los CAN
+			}
+		}
+
+		else if (getYawState()){
+			char* ptr = createCANmessage ('Y', getYaw()); // Creo un mensaje del tipo: S5Y-030E
+			for (i=0; i<6; i++){
+				sendCanMessage(ptr, i);	// Le mando a todos los CAN
+			}
+		}
+        
+    }
 
     updateBoard();      //check if there's info comming from other boards and update it
 }
@@ -123,8 +162,6 @@ void updateBoard(void){
         }
     }
 }
-
-    
 
 void setBoard (char* ptr){
 	//get the current board being used

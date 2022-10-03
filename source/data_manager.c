@@ -101,6 +101,42 @@ board getBoard(uint8_t group){
     return boards[group];
 }
 
+char* createCANmessage (char event, int16_t angle){
+    char newmessage [7];    
+    uint16_t data;
+
+    newmessage[0] = SS;
+    newmessage[1] = event; //roll, pitch or yaw
+
+    if (angle>0){
+        newmessage[2] = '+';
+        data = angle;
+    }
+        
+    else {
+        newmessage[2] = '-';
+        data = -angle;
+    }
+
+    //the corresponding variation, at a max number of 999
+    uint8_t c = (data/100);
+    uint8_t d = (data/10);
+    if(d>=10){
+        d = d - 10*c;
+    }
+    d = d + '0';
+    c = c + '0';
+    uint8_t u = (data%10)+'0';
+
+    newmessage[3] = c;
+    newmessage[4] = d;
+    newmessage[5] = u;
+
+    newmessage[6] = ES;
+
+    return &newmessage[0];
+
+}
 /*******************************************************************************
  ******************************************************************************/
 

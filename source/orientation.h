@@ -1,11 +1,11 @@
 /***************************************************************************//**
-  @file     data_manager.h
-  @brief    provides functions to send coded data to the pc
-  @author   Pedro DL
+  @file     orientation.h
+  @brief    Orientation retrieval and calculation
+  @author   Olivia De Vincenti
  ******************************************************************************/
 
-#ifndef _DATA_MANAGER_
-#define _DATA_MANAGER_
+#ifndef _ORIENTATION_H_
+#define _ORIENTATION_H_
 
 /*******************************************************************************
  * INCLUDE HEADER FILES
@@ -13,60 +13,75 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdlib.h>
+
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
-#define MESSAGE_LENGHT 18   //SS+G+RPY+ES   
-#define M_GROUP 1
-#define M_ROLL 2
-#define M_PITCH 7
-#define M_YAW 12
+#define ANGLE_THRESHOLD		5
+#define AXIS_N				3
+#define mG_TO_OFFSET(x)		((x) / 2)
 
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
-typedef struct{
-    int16_t roll;
-    int16_t pitch;
-    int16_t yaw;
-}board;			//board meassures
+
+typedef struct {
+	uint8_t acc_offset_reg;
+// Accelerometer axis
+	int8_t	x_acc_axis;
+	int8_t	y_acc_axis;
+	int8_t	z_acc_axis;
+// Magnetometer axis
+	uint8_t mag_offset_reg;
+	int16_t	x_mag_axis;
+	int16_t	y_mag_axis;
+	int16_t	z_mag_axis;
+} offset_t;
 
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
 
+
 /*******************************************************************************
  * FUNCTION PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
+bool orientation_Init();
 
-/**
- * @brief initializes data management functions
- */
-void dataManager_init(void);
+bool orientation_Config();
 
-/**
- * @brief returns the matrix with all the board values
- * @return A pointer to an board type matrix
- */
-board getBoard(uint8_t group);
+void calibrateOrientation(offset_t * orientation_offset);
 
-/**
- * @brief sends the data that changed to the pc via UART protocol
- * @param current_board the board being modified with it's current values
- * @param group group number of such board
- */
-void sendData (board current_board, uint8_t group);
+void orientation_Start();
 
-/**
- * @brief creates a string to send via CAN with the desires content
- * @param event a char with either 'R', 'P' or 'Y' to signal which event it is
- * @param angle variaton on said orientation
- */
-char* createCANmessage (char event, int16_t angle);
+bool isOrientationReady();
 
+bool orientation_Compute();
+
+bool getRollState();
+
+bool getPitchState();
+
+bool getYawState();
+
+uint16_t getRoll();
+
+uint16_t getPitch();
+
+uint16_t getYaw();
 
 /*******************************************************************************
  ******************************************************************************/
 
-#endif // _DATA_MANAGER_
+void get_accel_magnet_data();
+
+void refactor_data();
+
+void print_axis_data();
+
+void print_regs();
+
+
+#endif // _ORIENTATION_H_

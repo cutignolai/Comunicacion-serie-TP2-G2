@@ -10,7 +10,10 @@ C_SRCS += \
 ../source/can.c \
 ../source/data_manager.c \
 ../source/fifo.c \
+../source/fifo_i2c.c \
 ../source/gpio.c \
+../source/i2cm.c \
+../source/orientation.c \
 ../source/timer.c \
 ../source/uart.c 
 
@@ -21,7 +24,10 @@ OBJS += \
 ./source/can.o \
 ./source/data_manager.o \
 ./source/fifo.o \
+./source/fifo_i2c.o \
 ./source/gpio.o \
+./source/i2cm.o \
+./source/orientation.o \
 ./source/timer.o \
 ./source/uart.o 
 
@@ -32,7 +38,10 @@ C_DEPS += \
 ./source/can.d \
 ./source/data_manager.d \
 ./source/fifo.d \
+./source/fifo_i2c.d \
 ./source/gpio.d \
+./source/i2cm.d \
+./source/orientation.d \
 ./source/timer.d \
 ./source/uart.d 
 
