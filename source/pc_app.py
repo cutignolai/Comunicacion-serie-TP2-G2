@@ -113,15 +113,15 @@ def ReadData():
         #checks if the serial port is connected
         if not connected:
             try:
-                ports = serial.tools.list_ports.comports()
+                #ports = serial.tools.list_ports.comports()
 
-                available_ports = []
+                #available_ports = []
 
-                for p in ports:
-                    available_ports.append(p.device)
+                #for p in ports:
+                    #available_ports.append(p.device)
 
-                print("Available ports: " + str(available_ports))
-                port = input("Select a port number: ")
+                #print("Available ports: " + str(available_ports))
+                #port = input("Select a port number: ")
 
                 coms = serial.Serial('COM5', baudrate=9600, timeout=1)
 
@@ -378,6 +378,7 @@ def LoadBoards():
 def main():
 
     global coms
+    global connected
 
     # intitialization
     InitPygame()
