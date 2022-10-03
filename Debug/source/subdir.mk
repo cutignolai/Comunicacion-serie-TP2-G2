@@ -5,6 +5,7 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../source/App.c \
+../source/ComunicacionCAN.c \
 ../source/SysTick.c \
 ../source/can.c \
 ../source/data_manager.c \
@@ -15,6 +16,7 @@ C_SRCS += \
 
 OBJS += \
 ./source/App.o \
+./source/ComunicacionCAN.o \
 ./source/SysTick.o \
 ./source/can.o \
 ./source/data_manager.o \
@@ -25,6 +27,7 @@ OBJS += \
 
 C_DEPS += \
 ./source/App.d \
+./source/ComunicacionCAN.d \
 ./source/SysTick.d \
 ./source/can.d \
 ./source/data_manager.d \
