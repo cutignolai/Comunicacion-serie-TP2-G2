@@ -206,9 +206,7 @@ bool CAN_ReadRxMB(uint8_t index, CAN_DataFrame * frame)
 						((CAN0->MB[index].WORD1 & CAN_WORD1_DATA_BYTE_5_MASK)>>8)|
 						((CAN0->MB[index].WORD1 & CAN_WORD1_DATA_BYTE_6_MASK)<<8)|
 						((CAN0->MB[index].WORD1 & CAN_WORD1_DATA_BYTE_7_MASK)<<24);
-	
-	// Acknowledge the proper flag at IFLAG registers.
-	CAN0->IFLAG1 |= (1<<index); // W1C // ?????????????????
+
 
 	// Read the Free Running Timer. It is optional but recommended to unlock Mailbox as soon as possible and make it available for reception.
 	CAN0->TIMER;

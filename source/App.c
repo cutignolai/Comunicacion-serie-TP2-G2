@@ -67,7 +67,7 @@ void App_Init (void)
 	// INICIALIZA CAN
 	canComunicationInit();
 	canMBInit(OUR_BOARD_NUMBER_CAN);
-	//canMBInit(1);
+	canMBInit(1);
 	//canMBInit(2);
 
 
@@ -93,12 +93,15 @@ void App_Run (void)
 	
 	uint8_t i;
 
+    updateBoard();      //check if there's info comming from other boards and update it
+
+
     if (orientation_Compute()){		// Calcula y ve si hubo un cambio
 
 		if (getRollState()){
 			char can_msg[8];
 
-			for (i=0; i<1; i++){
+			for (i=2; i<3; i++){
 				createCANmessage ('R', getRoll(), can_msg, i); // Creo un mensaje del tipo: S2R+150E
 				sendCanMessage(can_msg, i);	// Le mando a todos los CAN
 			}
@@ -107,8 +110,8 @@ void App_Run (void)
 		else if (getPitchState()){
 			char can_msg[8];
 
-			for (i=0; i<1; i++){
-				createCANmessage ('P', getPitch(), can_msg, i); // Creo un mensaje del tipo: S2P+150E
+			for (i=2; i<3; i++){
+				createCANmessage ('C', getPitch(), can_msg, i); // Creo un mensaje del tipo: S2P+150E
 				sendCanMessage(can_msg, i);	// Le mando a todos los CAN
 			}
 		}
@@ -116,8 +119,8 @@ void App_Run (void)
 		else if (getYawState()){
 			char can_msg[8];
 
-			for (i=0; i<1; i++){
-				createCANmessage ('Y', getYaw(), can_msg, i); // Creo un mensaje del tipo: S5Y-030E
+			for (i=2; i<3; i++){
+				createCANmessage ('O', getYaw(), can_msg, i); // Creo un mensaje del tipo: S5Y-030E
 				sendCanMessage(can_msg, i);	// Le mando a todos los CAN
 			}
 		}
@@ -126,7 +129,6 @@ void App_Run (void)
 
 
 
-    updateBoard();      //check if there's info comming from other boards and update it
 }
 
 
@@ -137,7 +139,7 @@ void App_Run (void)
  ******************************************************************************/
 void updateBoard(void){
     uint8_t i;
-    for (i=0; i<1; i++){		// FIXME: TENER CUIDADO EL MAXIMO DEL FOR
+    for (i=0; i<3; i++){		// FIXME: TENER CUIDADO EL MAXIMO DEL FOR
         if(getBoardStatus(i) == 1)
         {           //get the pointer to the new message via CAN. It should be done for each can
 			char messageAux[] = "XXXXXXXX";
@@ -206,12 +208,12 @@ void setBoard (char* ptr){
                 current_board.roll = angle;
             }
         }
-        else if ((*(ptr + M_ROLL)) == 'P'){
+        else if ((*(ptr + M_ROLL)) == 'C'){
             if(checkAngle(angle)){
                 current_board.pitch = angle;
             }
         }
-        else if ((*(ptr + M_ROLL)) == 'Y'){
+        else if ((*(ptr + M_ROLL)) == 'O'){
             if(checkAngle(angle)){
                 current_board.yaw = angle;
             }

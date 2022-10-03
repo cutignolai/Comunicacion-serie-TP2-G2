@@ -80,11 +80,11 @@ void sendData (board current_board, uint8_t group){
     add_angle(M_ROLL, current_board.roll);
     boards[group].roll = current_board.roll;
 
-    message[M_PITCH] = 'P';
+    message[M_PITCH] = 'C';
     add_angle(M_PITCH, current_board.pitch);
     boards[group].pitch = current_board.pitch;
 
-    message[M_YAW] = 'Y';
+    message[M_YAW] = 'O';
     add_angle(M_YAW, current_board.yaw);
     boards[group].yaw = current_board.yaw;
 
