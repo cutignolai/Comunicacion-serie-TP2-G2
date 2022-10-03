@@ -66,11 +66,11 @@ bool getPitchState();
 
 bool getYawState();
 
-uint16_t getRoll();
+int getRoll();
 
-uint16_t getPitch();
+int getPitch();
 
-uint16_t getYaw();
+int getYaw();
 
 /*******************************************************************************
  ******************************************************************************/

@@ -19,7 +19,7 @@
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
 
-#define OUR_BOARD_NUMBER_CAN 0
+#define OUR_BOARD_NUMBER_CAN 1
 
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
@@ -67,11 +67,11 @@ void App_Init (void)
 	// INICIALIZA CAN
 	canComunicationInit();
 	canMBInit(OUR_BOARD_NUMBER_CAN);
-	// canMBInit(1);
-	// canMBInit(2);
-	// canMBInit(3);
-	// canMBInit(4);
-	// canMBInit(5);
+	canMBInit(1);
+	canMBInit(2);
+	canMBInit(3);
+	canMBInit(4);
+	canMBInit(5);
 
 	// INICIALIZA ACELEROMETRO
 	orientation_Init();
@@ -95,24 +95,31 @@ void App_Run (void)
 	
 	uint8_t i;
 
-    if (orientation_Compute()){		// Calcula y ve si hubo un cambio
+    if (true){		// Calcula y ve si hubo un cambio
 
-		if (getRollState()){
-            char* ptr = createCANmessage ('R', getRoll()); // Creo un mensaje del tipo: S2R+150E
+		if (true){
+			char ptr[] = "S2R+150E";
+            //char* ptr = createCANmessage ('R', getRoll()); // Creo un mensaje del tipo: S2R+150E
+			for (i=0; i<2; i++){
+				sendCanMessage(ptr, i);	// Le mando a todos los CAN
+			}
+			char ptr2[] = "AAAAAAAA";
+			for (i=2; i<6; i++){
+				sendCanMessage(ptr2, i);	// Le mando a todos los CAN
+			}
+		}
+
+		else if (false){
+			char ptr[] = "S2P+150E";
+			// char* ptr = createCANmessage ('P', getPitch()); // Creo un mensaje del tipo: S2P+150E
 			for (i=0; i<6; i++){
 				sendCanMessage(ptr, i);	// Le mando a todos los CAN
 			}
 		}
 
-		else if (getPitchState()){
-			char* ptr = createCANmessage ('P', getPitch()); // Creo un mensaje del tipo: S2P+150E
-			for (i=0; i<6; i++){
-				sendCanMessage(ptr, i);	// Le mando a todos los CAN
-			}
-		}
-
-		else if (getYawState()){
-			char* ptr = createCANmessage ('Y', getYaw()); // Creo un mensaje del tipo: S5Y-030E
+		else if (false){
+			char ptr[] = "S5Y-030E";
+			// char* ptr = createCANmessage ('Y', getYaw()); // Creo un mensaje del tipo: S5Y-030E
 			for (i=0; i<6; i++){
 				sendCanMessage(ptr, i);	// Le mando a todos los CAN
 			}

@@ -61,7 +61,7 @@ bool receiveCanMessage(char* message, int board)
 
 	bool status;
 
-    status = CAN_ReadRxMB(0, frame_pointerAnsw);
+    status = CAN_ReadRxMB(board, frame_pointerAnsw);
 
     message[0] = frame_pointerAnsw->dataByte0;
     message[1] = frame_pointerAnsw->dataByte1;
