@@ -179,7 +179,7 @@ void CAN_WriteTxMB(uint8_t index, CAN_DataFrame * frame)
 							CAN_WORD1_DATA_BYTE_7(frame->dataByte7);
 
 	// Write the DLC and CODE fields of the Control and Status word to activate the MB.
-	CAN0->MB[index].CS = CAN_CS_RTR(0) | CAN_CS_CODE(TX_DATA) | CAN_CS_DLC(8) | CAN_CS_SRR(1) | CAN_CS_IDE(0);
+	CAN0->MB[index].CS = CAN_CS_RTR(0) | CAN_CS_CODE(TX_DATA) | CAN_CS_DLC(5) | CAN_CS_SRR(1) | CAN_CS_IDE(0);
 	
 }
 

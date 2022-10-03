@@ -34,11 +34,11 @@ void sendCanMessage(char* message, int board)
 
 	frame.ID = MY_BOARD_ID;
 
-	frame_pointer->dataByte0 = message[0];
-	frame_pointer->dataByte1 = message[1];
-	frame_pointer->dataByte2 = message[2];
-	frame_pointer->dataByte3 = message[3];
-	frame_pointer->dataByte4 = message[4];
+	frame_pointer->dataByte0 = message[2];
+	frame_pointer->dataByte1 = message[3];
+	frame_pointer->dataByte2 = message[4];
+	frame_pointer->dataByte3 = message[5];
+	frame_pointer->dataByte4 = message[6];
 	frame_pointer->dataByte5 = message[5];
 	frame_pointer->dataByte6 = message[6];
 	frame_pointer->dataByte7 = message[7];
@@ -63,14 +63,14 @@ bool receiveCanMessage(char* message, int board)
 
     status = CAN_ReadRxMB(board, frame_pointerAnsw);
 
-    message[0] = frame_pointerAnsw->dataByte0;
-    message[1] = frame_pointerAnsw->dataByte1;
-    message[2] = frame_pointerAnsw->dataByte2;
-    message[3] = frame_pointerAnsw->dataByte3;
-    message[4] = frame_pointerAnsw->dataByte4;
-    message[5] = frame_pointerAnsw->dataByte5;
-    message[6] = frame_pointerAnsw->dataByte6;
-    message[7] = frame_pointerAnsw->dataByte7;
+    message[0] = 'S';
+    message[1] = 48+board;
+    message[2] = frame_pointerAnsw->dataByte0;
+    message[3] = frame_pointerAnsw->dataByte1;
+    message[4] = frame_pointerAnsw->dataByte2;
+    message[5] = frame_pointerAnsw->dataByte3;
+    message[6] = frame_pointerAnsw->dataByte4;
+    message[7] = 'E';
 
     mbStatus[board] = NOTHING_YET;
 
