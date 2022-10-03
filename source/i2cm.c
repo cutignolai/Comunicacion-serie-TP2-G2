@@ -177,7 +177,7 @@ void I2C_Init(uint8_t id){
 bool I2C_NewTransaction(uint8_t id, i2c_transaction_t* trans){
 	//if (trans->mode == I2C_READ_MODE){ trans->count++; }
 	bool b = I2C_FIFO_PushToBuffer(i2c_fifo[id], trans);
-	if (!b && I2C_FIFO_GetBufferLength(i2c_fifo[id]) == 1 && I2C_state[id] == I2C_IDLE){
+	if (!b && I2C_FIFO_GetBufferLength(i2c_fifo[id]) >= 1 && I2C_state[id] == I2C_IDLE){
 		I2C_start_transaction(id);
 	}
 	return b;

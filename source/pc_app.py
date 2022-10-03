@@ -70,7 +70,6 @@ def smallDrawText(position, textString, color):
 # decodes the information received according to a transmition code made
 def manageInfo(info):
     try:
-        print(info)
         group = int(info[0])
 
         # roll
@@ -134,7 +133,7 @@ def ReadData():
                 # data that entries via serial port
                 port_data = ""
                 incomming_info = coms.read().decode("ascii")
-
+                print(incomming_info)
                 if incomming_info == 'S':  # start sentinel
 
                     while incomming_info != 'E':  # end sentinel
